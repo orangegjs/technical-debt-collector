@@ -263,14 +263,12 @@ export default function UserProfilePage() {
             )}
 
             <div className="flex justify-end gap-3 mt-2">
-              {editing && (
-                <button
-                  onClick={() => { setEditing(false); setGlobalError(''); setErrors({}) }}
-                  className="px-5 py-2 rounded-lg bg-cancelgray text-white text-sm font-semibold hover:bg-gray-600 transition-colors"
-                >
-                  Cancel
-                </button>
-              )}
+              <button
+                onClick={() => navigate('/dashboard')}
+                className="px-5 py-2 rounded-lg bg-cancelgray text-white text-sm font-semibold hover:bg-gray-600 transition-colors"
+              >
+                Cancel
+              </button>
               <button
                 onClick={() => setShowDelete(true)}
                 className="px-5 py-2 rounded-lg bg-deletered text-white text-sm font-semibold hover:bg-red-700 transition-colors"

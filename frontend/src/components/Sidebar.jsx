@@ -19,7 +19,7 @@ export default function Sidebar() {
   }
 
   return (
-    <aside className="w-[220px] min-h-screen bg-white flex flex-col shadow-sm shrink-0">
+    <aside className="w-[220px] h-screen sticky top-0 bg-white flex flex-col shadow-sm shrink-0 overflow-y-auto">
       <div className="p-5 border-b border-gray-100">
         <Logo size="sm" />
       </div>
@@ -29,7 +29,7 @@ export default function Sidebar() {
           className="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-blue-50 text-primary font-medium text-sm text-left"
         >
           <PersonIcon />
-          User Admin
+          User Account
         </button>
         <button
           onClick={handleLogout}

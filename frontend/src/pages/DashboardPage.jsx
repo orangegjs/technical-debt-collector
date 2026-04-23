@@ -86,7 +86,7 @@ export default function DashboardPage() {
           // displayUserFound(result_list)
           <div className="flex flex-col gap-3">
             {users.map((user) => (
-              <UserCard key={user.user_id} user={user} onClick={setSelectedUser} />
+              <UserCard key={user.userID} user={user} onClick={setSelectedUser} />
             ))}
           </div>
         )}
