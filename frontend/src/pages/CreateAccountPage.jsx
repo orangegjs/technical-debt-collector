@@ -49,7 +49,6 @@ export default function CreateAccountPage() {
   function validateInput(username, password, name, email, accountStatus, role) {
     const errs = {}
     if (!username || !username.trim()) errs.username = 'Username is required.'
-    if (!name || !name.trim()) errs.name = 'Name is required.'
     if (!email || !EMAIL_REGEX.test(email)) {
       errs.email = 'Please enter a valid email address in the format name@example.com.'
     }
