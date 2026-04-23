@@ -1,9 +1,7 @@
+import bcrypt
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import Session
 from database import Base
-from passlib.context import CryptContext
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 class UserAccount(Base):
@@ -23,7 +21,7 @@ class UserAccount(Base):
 
     def login(self, db: Session, username: str, password: str) -> "UserAccount | None":
         user = db.query(UserAccount).filter(UserAccount.username == username).first()
-        if user and pwd_context.verify(password, user.password):
+        if user and bcrypt.checkpw(password.encode(), user.password.encode()):
             return user
         return None
 
@@ -38,7 +36,7 @@ class UserAccount(Base):
         role: str,
     ) -> bool:
         try:
-            hashed = pwd_context.hash(password)
+            hashed = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
             new_user = UserAccount(
                 username=username,
                 password=hashed,
@@ -72,7 +70,7 @@ class UserAccount(Base):
             if "role" in user_acc and user_acc["role"] is not None:
                 user.role = user_acc["role"]
             if "password" in user_acc and user_acc["password"]:
-                user.password = pwd_context.hash(user_acc["password"])
+                user.password = bcrypt.hashpw(user_acc["password"].encode(), bcrypt.gensalt()).decode()
             db.commit()
             return True
         except Exception:
