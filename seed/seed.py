@@ -1,10 +1,9 @@
 import random
 import os
+import bcrypt
 from faker import Faker
-from passlib.context import CryptContext
 
 fake = Faker()
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 ROLES = ["User Admin", "Donee", "Platform Management", "Fund Raiser"]
 STATUSES = ["Active"] * 8 + ["Inactive"] * 2  # 80% Active, 20% Inactive
@@ -55,7 +54,7 @@ for i in range(NUM_RECORDS):
     user_id = unique_user_id()
     username = unique_username()
     raw_password = fake.password(length=random.randint(12, 16), special_chars=True, digits=True, upper_case=True, lower_case=True)
-    password_hash = pwd_context.hash(raw_password)
+    password_hash = bcrypt.hashpw(raw_password.encode(), bcrypt.gensalt()).decode()
     email = unique_email()
     status = random.choice(STATUSES)
     role = random.choice(ROLES)
