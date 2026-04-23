@@ -10,17 +10,8 @@ STATUSES = ["Active"] * 8 + ["Inactive"] * 2  # 80% Active, 20% Inactive
 
 NUM_RECORDS = 100
 
-used_ids = set()
 used_usernames = set()
 used_emails = set()
-
-
-def unique_user_id():
-    while True:
-        uid = random.randint(10000000, 99999999)
-        if uid not in used_ids:
-            used_ids.add(uid)
-            return uid
 
 
 def unique_username():
@@ -51,7 +42,6 @@ lines = [
 
 records = []
 for i in range(NUM_RECORDS):
-    user_id = unique_user_id()
     username = unique_username()
     raw_password = fake.password(length=random.randint(12, 16), special_chars=True, digits=True, upper_case=True, lower_case=True)
     password_hash = bcrypt.hashpw(raw_password.encode(), bcrypt.gensalt()).decode()
@@ -60,8 +50,8 @@ for i in range(NUM_RECORDS):
     role = random.choice(ROLES)
 
     sql = (
-        f"INSERT INTO user_account (\"userID\", username, email, password, \"accountStatus\", role) "
-        f"VALUES ({user_id}, '{escape_sql(username)}', '{escape_sql(email)}', "
+        f"INSERT INTO user_account (username, email, password, \"accountStatus\", role) "
+        f"VALUES ('{escape_sql(username)}', '{escape_sql(email)}', "
         f"'{escape_sql(password_hash)}', '{status}', '{role}');"
     )
     records.append(sql)
