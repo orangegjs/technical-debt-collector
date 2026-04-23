@@ -7,6 +7,6 @@ class SearchUserAccountController:
     def searchUserAcc(self, db: Session, keyword: str) -> list:
         results = db.query(UserAccount).filter(
             UserAccount.username.ilike(f"%{keyword}%")
-            | UserAccount.user_id.cast(String).ilike(f"%{keyword}%")
+            | UserAccount.userID.cast(String).ilike(f"%{keyword}%")
         ).all()
         return results
