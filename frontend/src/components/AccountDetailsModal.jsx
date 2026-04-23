@@ -32,10 +32,10 @@ export default function AccountDetailsModal({ user, onClose }) {
         </div>
 
         <div className="px-8 py-5 space-y-3">
-          <DetailRow label="User ID" value={user.user_id} />
+          <DetailRow label="User ID" value={user.userID} />
           <DetailRow label="Email" value={user.email} />
           <DetailRow label="Role" value={user.role} />
-          <DetailRow label="Status" value={user.status} />
+          <DetailRow label="Status" value={user.accountStatus} />
         </div>
 
         <div className="px-8 pb-7 flex justify-end gap-3">
@@ -46,7 +46,7 @@ export default function AccountDetailsModal({ user, onClose }) {
             Close
           </button>
           <button
-            onClick={() => navigate(`/user-profile/${user.user_id}`)}
+            onClick={() => navigate(`/user-profile/${user.userID}`)}
             className="px-5 py-2 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-blue-700 transition-colors"
           >
             Update

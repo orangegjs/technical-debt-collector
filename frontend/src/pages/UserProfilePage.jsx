@@ -51,12 +51,12 @@ export default function UserProfilePage() {
     async function load() {
       try {
         const user = await retrieveUserAccount(Number(id))
-        setUserId(user.user_id)
+        setUserId(user.userID)
         setForm({
           username: user.username || '',
           email: user.email || '',
           password: '',
-          status: user.status || 'Active',
+          status: user.accountStatus || 'Active',
           role: user.role || 'Donee',
           name: user.name || '',
           age: user.age || '',
@@ -102,10 +102,8 @@ export default function UserProfilePage() {
       const payload = {
         username: form.username,
         email: form.email,
-        status: form.status,
+        accountStatus: form.status,
         role: form.role,
-        name: form.name,
-        age: form.age ? Number(form.age) : undefined,
       }
       if (form.password) payload.password = form.password
       await updateUserAccount(Number(id), payload)

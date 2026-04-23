@@ -10,7 +10,7 @@ export default function UserCard({ user, onClick }) {
       <div className="flex gap-8 text-sm font-medium text-gray-700">
         <span>
           <span className="text-gray-400 mr-1">User ID:</span>
-          {user.user_id}
+          {user.userID}
         </span>
         <span>
           <span className="text-gray-400 mr-1">User Name:</span>
