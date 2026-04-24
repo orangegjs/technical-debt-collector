@@ -58,18 +58,12 @@ jobs:
               sys.exit(0)
           except Exception as e:
               print(f'✗ Failed to import app: {e}')
-              sys.exit(0)
+              sys.exit(1)
           "
-      
+
       - name: Run tests
         working-directory: ./backend
-        run: |
-          if [ -d "tests" ]; then
-            pytest --verbose
-          else
-            echo "ℹ No tests directory found - skipping tests"
-          fi
-        continue-on-error: true
+        run: pytest tests/ --verbose
       
       - name: Summary
         run: |
