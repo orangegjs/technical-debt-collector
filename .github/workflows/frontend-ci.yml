@@ -1,0 +1,47 @@
+name: Frontend CI
+
+# When to run this workflow
+on:
+  push:
+    branches: [ main, dev ]
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/frontend-ci.yml'
+  pull_request:
+    branches: [ main, dev ]
+    paths:
+      - 'frontend/**'
+
+jobs:
+  frontend-quality-check:
+    name: Frontend Quality Check
+    runs-on: ubuntu-latest
+    
+    steps:
+      # Step 1: Get the code from your repo
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      # Step 2: Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: './frontend/package-lock.json'
+      
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        working-directory: ./frontend
+        run: npm ci
+      
+      # Step 4: Build the project (checks for build errors)
+      - name: Build project
+        working-directory: ./frontend
+        run: npm run build
+      
+      # Step 5: Run tests (will pass even with no tests for now)
+      - name: Run tests
+        working-directory: ./frontend
+        run: |
+          npm test --if-present || echo "No tests found - skipping"

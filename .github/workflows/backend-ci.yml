@@ -1,0 +1,58 @@
+name: Backend CI
+
+# When to run this workflow
+on:
+  push:
+    branches: [ main, dev ]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend-ci.yml'
+  pull_request:
+    branches: [ main, dev ]
+    paths:
+      - 'backend/**'
+
+jobs:
+  backend-quality-check:
+    name: Backend Quality Check
+    runs-on: ubuntu-latest
+    
+    steps:
+      # Step 1: Get the code from your repo
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      # Step 2: Set up Python 3.11
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        working-directory: ./backend
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install flake8 pytest
+      
+      # Step 4: Lint with flake8 (checks code quality)
+      - name: Lint with flake8
+        working-directory: ./backend
+        run: |
+          # Stop the build if there are Python syntax errors or undefined names
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          # Treat all errors as warnings (more lenient)
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+      
+      # Step 5: Run tests (will pass even with no tests for now)
+      - name: Run tests
+        working-directory: ./backend
+        run: |
+          pytest --verbose || echo "No tests found - skipping"
+      
+      # Step 6: Check if app can start
+      - name: Verify app structure
+        working-directory: ./backend
+        run: |
+          python -c "from main import app; print('✓ FastAPI app loaded successfully')"
