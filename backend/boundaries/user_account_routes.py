@@ -24,7 +24,6 @@ class LoginRequest(BaseModel):
 class UserAccountCreate(BaseModel):
     username: str
     password: str
-    name: str
     email: str
     accountStatus: str = "Active"
     role: str
@@ -81,7 +80,6 @@ def create_user(payload: UserAccountCreate, db: Session = Depends(get_db)):
         db,
         username=payload.username,
         password=payload.password,
-        name=payload.name,
         email=payload.email,
         accountStatus=payload.accountStatus,
         role=payload.role,

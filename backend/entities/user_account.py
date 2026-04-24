@@ -30,7 +30,6 @@ class UserAccount(Base):
         db: Session,
         username: str,
         password: str,
-        name: str,
         email: str,
         accountStatus: str,
         role: str,

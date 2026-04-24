@@ -48,7 +48,6 @@ def test_create_user_account_success():
         json={
             "username": "testuser",
             "password": "TestP@ssw0rd123!",
-            "name": "Test User",
             "email": "test@example.com",
             "accountStatus": "Active",
             "role": "User Admin"
@@ -72,7 +71,6 @@ def test_create_user_account_duplicate_username():
         json={
             "username": "duplicate",
             "password": "TestP@ssw0rd123!",
-            "name": "First User",
             "email": "first@example.com",
             "accountStatus": "Active",
             "role": "Donee"
@@ -85,7 +83,6 @@ def test_create_user_account_duplicate_username():
         json={
             "username": "duplicate",  # Same username!
             "password": "DifferentP@ss123!",
-            "name": "Second User",
             "email": "second@example.com",
             "accountStatus": "Active",
             "role": "Fund Raiser"
@@ -103,7 +100,6 @@ def test_login_success():
         json={
             "username": "logintest",
             "password": "LoginP@ss123!",
-            "name": "Login Test",
             "email": "login@example.com",
             "accountStatus": "Active",
             "role": "User Admin"
@@ -132,7 +128,6 @@ def test_login_wrong_password():
         json={
             "username": "failtest",
             "password": "CorrectP@ss123!",
-            "name": "Fail Test",
             "email": "fail@example.com",
             "accountStatus": "Active",
             "role": "Donee"
