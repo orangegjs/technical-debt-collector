@@ -6,3 +6,7 @@ pydantic
 python-dotenv
 bcrypt
 python-multipart
+# Testing dependencies (add these)
+pytest
+flake8
+httpx
