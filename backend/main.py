@@ -1,12 +1,18 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from database import engine, Base
 import entities.user_account  # register models
 from boundaries.user_account_routes import router
 
-Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="FundBridger API", version="1.0.0")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    Base.metadata.create_all(bind=engine)
+    yield
+
+
+app = FastAPI(title="FundBridger API", version="1.0.0", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
