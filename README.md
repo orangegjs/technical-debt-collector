@@ -4,6 +4,14 @@ An online fundraising platform built with FastAPI + React using BCE (Boundary–
 
 ---
 
+## Tech Stack
+
+- **Frontend:** React 18 + React Router + Tailwind CSS, built with Vite
+- **Backend (BCE & OOP):** Python, FastAPI, SQLAlchemy, Pydantic
+- **Database:** PostgreSQL
+
+---
+
 ## 1. Prerequisites
 
 - Python 3.11+
