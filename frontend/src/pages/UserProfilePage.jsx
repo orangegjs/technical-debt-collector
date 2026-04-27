@@ -94,7 +94,6 @@ export default function UserProfilePage() {
     const errs = validate()
     if (Object.keys(errs).length > 0) {
       setErrors(errs)
-      setGlobalError('Password must be at least 12 characters and include uppercase, lowercase, number, and symbol')
       return
     }
     setSaving(true)
@@ -220,7 +219,7 @@ export default function UserProfilePage() {
                   className={`w-full px-4 py-2.5 rounded-xl border text-sm text-gray-700 outline-none focus:border-primary transition-colors ${errors.email ? 'border-deletered' : 'border-gray-200'}`}
                 />
               </Field>
-              <Field label="Password" error={errors.password} hint={!errors.password ? 'Must be 8-12 characters long and include letters, numbers, and special characters.' : ''}>
+              <Field label="Password" error={errors.password} hint={!errors.password ? 'Must be at least 12 characters and include uppercase, lowercase, number, and symbol.' : ''}>
                 <input
                   type="password"
                   value={form.password}

@@ -32,8 +32,6 @@ export default function CreateAccountPage() {
     password: '',
     status: 'Active',
     role: 'Donee',
-    name: '',
-    age: '',
     profile_picture_url: '',
   })
   const [errors, setErrors] = useState({})
@@ -46,7 +44,7 @@ export default function CreateAccountPage() {
     setGlobalError('')
   }
 
-  function validateInput(username, password, name, email, accountStatus, role) {
+  function validateInput(username, password, email, accountStatus, role) {
     const errs = {}
     if (!username || !username.trim()) errs.username = 'Username is required.'
     if (!email || !EMAIL_REGEX.test(email)) {
@@ -65,7 +63,6 @@ export default function CreateAccountPage() {
     const errs = validateInput(
       form.username,
       form.password,
-      form.name,
       form.email,
       form.status,
       form.role,
@@ -81,7 +78,6 @@ export default function CreateAccountPage() {
       await createUserAccount(
         form.username,
         form.password,
-        form.name || form.username,
         form.email,
         form.status,
         form.role,
@@ -169,7 +165,7 @@ export default function CreateAccountPage() {
                   className={`w-full px-4 py-2.5 rounded-xl border text-sm text-gray-700 outline-none focus:border-primary transition-colors ${errors.email ? 'border-deletered' : 'border-gray-200'}`}
                 />
               </Field>
-              <Field label="Password" error={errors.password} hint={!errors.password ? 'Must be 8-12 characters long and include letters, numbers, and special characters.' : ''}>
+              <Field label="Password" error={errors.password} hint={!errors.password ? 'Must be at least 12 characters and include uppercase, lowercase, number, and symbol.' : ''}>
                 <input
                   type="password"
                   value={form.password}
