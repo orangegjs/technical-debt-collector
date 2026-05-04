@@ -11,7 +11,7 @@ class UserProfile(Base):
     profileDescription = Column(String, nullable=True)
     profileStatus      = Column(String, default="Active")  # "Active" or "Suspended"
 
-    def createUserProfile(self, db: Session, profileName: str, profileDescription: str) -> bool:
+    def createUserProfile(self, db: Session, profileName: str, profileDescription: str, profileStatus: str = "Active") -> bool:
         try:
             existing = db.query(UserProfile).filter(UserProfile.profileName == profileName).first()
             if existing:
@@ -19,6 +19,7 @@ class UserProfile(Base):
             new_profile = UserProfile(
                 profileName=profileName,
                 profileDescription=profileDescription,
+                profileStatus=profileStatus,
             )
             db.add(new_profile)
             db.commit()
@@ -42,6 +43,8 @@ class UserProfile(Base):
                 profile.profileName = user_pro["profileName"]
             if "profileDescription" in user_pro:
                 profile.profileDescription = user_pro["profileDescription"]
+            if "profileStatus" in user_pro and user_pro["profileStatus"] is not None:
+                profile.profileStatus = user_pro["profileStatus"]
             db.commit()
             return True
         except Exception:

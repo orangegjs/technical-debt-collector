@@ -16,8 +16,8 @@ async function request(method, path, body) {
 }
 
 // → CreateUserProfileController.createUserProfile()
-export async function createUserProfile(profileName, profileDescription) {
-  return request('POST', '/api/profiles', { profileName, profileDescription })
+export async function createUserProfile(profileName, profileDescription, profileStatus = 'Active') {
+  return request('POST', '/api/profiles', { profileName, profileDescription, profileStatus })
 }
 
 // → RetrieveUserProfileController.retrieveUserProfile()

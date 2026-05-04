@@ -12,6 +12,7 @@ export default function UserProfileManagementPage() {
   const [profiles, setProfiles] = useState([])
   const [loading, setLoading] = useState(false)
   const [noResults, setNoResults] = useState(false)
+  const [selectedProfile, setSelectedProfile] = useState(null)
 
   useEffect(() => {
     loadAll()
@@ -84,12 +85,23 @@ export default function UserProfileManagementPage() {
               <ProfileCard
                 key={profile.profileID}
                 profile={profile}
-                onClick={() => navigate(`/edit-user-profile/${profile.profileID}`)}
+                onClick={() => setSelectedProfile(profile)}
               />
             ))}
           </div>
         )}
       </main>
+
+      {selectedProfile && (
+        <ProfileDetailModal
+          profile={selectedProfile}
+          onClose={() => setSelectedProfile(null)}
+          onUpdate={() => {
+            setSelectedProfile(null)
+            navigate(`/edit-user-profile/${selectedProfile.profileID}`)
+          }}
+        />
+      )}
     </div>
   )
 }
@@ -108,6 +120,81 @@ function ProfileCard({ profile, onClick }) {
         <p className="text-xs text-gray-500">{truncated}</p>
       )}
     </button>
+  )
+}
+
+function ProfileDetailModal({ profile, onClose, onUpdate }) {
+  const isActive = profile.profileStatus === 'Active'
+  const isSuspended = profile.profileStatus === 'Suspended'
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 p-7 flex flex-col gap-5">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-bold text-gray-900">Profile Details</h2>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600 transition-colors text-lg leading-none"
+          >
+            ×
+          </button>
+        </div>
+
+        <div className="flex flex-col gap-4">
+          <p className="text-sm font-semibold text-gray-700">Profile Information</p>
+          <table className="w-full text-sm">
+            <tbody className="divide-y divide-gray-100">
+              <DetailRow label="Profile ID" value={profile.profileID} />
+              <DetailRow label="Profile Name" value={profile.profileName} />
+              <DetailRow
+                label="Profile Description"
+                value={profile.profileDescription || <span className="text-gray-400 italic">No description</span>}
+              />
+              <DetailRow
+                label="Profile Status"
+                value={
+                  <span
+                    className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${
+                      isActive
+                        ? 'bg-green-100 text-green-700'
+                        : isSuspended
+                        ? 'bg-red-100 text-deletered'
+                        : 'bg-gray-100 text-gray-600'
+                    }`}
+                  >
+                    {profile.profileStatus}
+                  </span>
+                }
+              />
+            </tbody>
+          </table>
+        </div>
+
+        <div className="flex justify-end gap-3 pt-1">
+          <button
+            onClick={onClose}
+            className="px-5 py-2 rounded-lg bg-cancelgray text-white text-sm font-semibold hover:bg-gray-600 transition-colors"
+          >
+            Close
+          </button>
+          <button
+            onClick={onUpdate}
+            className="px-5 py-2 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-blue-700 transition-colors"
+          >
+            Update
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function DetailRow({ label, value }) {
+  return (
+    <tr>
+      <td className="py-2.5 pr-4 font-medium text-gray-600 w-2/5 align-top">{label}</td>
+      <td className="py-2.5 text-gray-800 align-top">{value}</td>
+    </tr>
   )
 }
 

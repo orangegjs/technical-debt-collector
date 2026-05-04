@@ -17,11 +17,13 @@ router = APIRouter(prefix="/api")
 class UserProfileCreate(BaseModel):
     profileName: str
     profileDescription: Optional[str] = None
+    profileStatus: Optional[str] = "Active"
 
 
 class UserProfileUpdate(BaseModel):
     profileName: Optional[str] = None
     profileDescription: Optional[str] = None
+    profileStatus: Optional[str] = None
 
 
 class UserProfileResponse(BaseModel):
@@ -41,7 +43,7 @@ class UserProfileResponse(BaseModel):
 @router.post("/profiles", response_model=UserProfileResponse, status_code=201)
 def create_profile(payload: UserProfileCreate, db: Session = Depends(get_db)):
     ctrl = CreateUserProfileController()
-    result = ctrl.createUserProfile(db, payload.profileName, payload.profileDescription)
+    result = ctrl.createUserProfile(db, payload.profileName, payload.profileDescription, payload.profileStatus or "Active")
     if result == "duplicate":
         raise HTTPException(status_code=400, detail="displayDuplicateProfile")
     if not result:

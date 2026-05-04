@@ -8,12 +8,17 @@ import Sidebar from '../components/Sidebar'
 import SuspendConfirmModal from '../components/SuspendConfirmModal'
 import { retrieveUserProfile, updateUserProfile, suspendUserProfile } from '../api/userProfileApi'
 
+const STATUSES = ['Active', 'Inactive', 'Suspended']
+
 export default function EditUserProfilePage() {
   const { id } = useParams()
   const navigate = useNavigate()
 
-  const [form, setForm] = useState({ profileName: '', profileDescription: '' })
-  const [profileStatus, setProfileStatus] = useState('Active')
+  const [form, setForm] = useState({
+    profileName: '',
+    profileDescription: '',
+    profileStatus: 'Active',
+  })
   const [profileID, setProfileID] = useState(null)
   const [errors, setErrors] = useState({})
   const [globalError, setGlobalError] = useState('')
@@ -28,10 +33,10 @@ export default function EditUserProfilePage() {
         // displayUserProfile()
         const profile = await retrieveUserProfile(Number(id))
         setProfileID(profile.profileID)
-        setProfileStatus(profile.profileStatus)
         setForm({
           profileName: profile.profileName || '',
           profileDescription: profile.profileDescription || '',
+          profileStatus: profile.profileStatus || 'Active',
         })
       } catch {
         setGlobalError('Failed to load profile.')
@@ -66,6 +71,7 @@ export default function EditUserProfilePage() {
       await updateUserProfile(Number(id), {
         profileName: form.profileName.trim(),
         profileDescription: form.profileDescription.trim() || null,
+        profileStatus: form.profileStatus,
       })
       // displayUpdateSuccess
       navigate('/user-profile-management')
@@ -103,7 +109,7 @@ export default function EditUserProfilePage() {
     )
   }
 
-  const isActive = profileStatus === 'Active'
+  const isSuspended = form.profileStatus === 'Suspended'
 
   return (
     <div className="flex min-h-screen bg-lightbg">
@@ -125,18 +131,21 @@ export default function EditUserProfilePage() {
               </Field>
 
               <Field label="Profile Status">
-                <div className="flex items-center h-[42px]">
-                  <span
-                    className={`text-xs font-semibold px-3 py-1 rounded-full ${
-                      isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-deletered'
-                    }`}
+                <div className="relative">
+                  <select
+                    value={form.profileStatus}
+                    onChange={(e) => handleChange('profileStatus', e.target.value)}
+                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-700 outline-none focus:border-primary appearance-none bg-white transition-colors"
                   >
-                    {profileStatus}
-                  </span>
+                    {STATUSES.map((s) => (
+                      <option key={s} value={s}>{s}</option>
+                    ))}
+                  </select>
+                  <ChevronDown />
                 </div>
               </Field>
 
-              <Field label="Profile Name" error={errors.profileName}>
+              <Field label="Profile Name" error={errors.profileName} className="col-span-2">
                 <input
                   value={form.profileName}
                   onChange={(e) => handleChange('profileName', e.target.value)}
@@ -170,7 +179,7 @@ export default function EditUserProfilePage() {
               </button>
               <button
                 onClick={() => setShowSuspend(true)}
-                disabled={!isActive}
+                disabled={isSuspended}
                 className="px-5 py-2 rounded-lg bg-deletered text-white text-sm font-semibold hover:bg-red-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 Suspend Profile
@@ -198,12 +207,22 @@ export default function EditUserProfilePage() {
   )
 }
 
-function Field({ label, children, error }) {
+function Field({ label, children, error, className }) {
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className={`flex flex-col gap-1.5 ${className || ''}`}>
       <label className="text-sm font-medium text-gray-600">{label}</label>
       {children}
       {error && <p className="text-deletered text-xs">{error}</p>}
+    </div>
+  )
+}
+
+function ChevronDown() {
+  return (
+    <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2" strokeLinecap="round">
+        <polyline points="6 9 12 15 18 9" />
+      </svg>
     </div>
   )
 }

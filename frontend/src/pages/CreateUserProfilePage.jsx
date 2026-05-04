@@ -7,10 +7,12 @@ import { useNavigate } from 'react-router-dom'
 import Sidebar from '../components/Sidebar'
 import { createUserProfile } from '../api/userProfileApi'
 
+const STATUSES = ['Active', 'Inactive']
+
 export default function CreateUserProfilePage() {
   const navigate = useNavigate()
 
-  const [form, setForm] = useState({ profileName: '', profileDescription: '' })
+  const [form, setForm] = useState({ profileName: '', profileDescription: '', profileStatus: 'Active' })
   const [errors, setErrors] = useState({})
   const [globalError, setGlobalError] = useState('')
   const [saving, setSaving] = useState(false)
@@ -35,7 +37,11 @@ export default function CreateUserProfilePage() {
     }
     setSaving(true)
     try {
-      await createUserProfile(form.profileName.trim(), form.profileDescription.trim() || null)
+      await createUserProfile(
+        form.profileName.trim(),
+        form.profileDescription.trim() || null,
+        form.profileStatus,
+      )
       // displayUserProfileCreatedSuccess
       navigate('/user-profile-management')
     } catch (err) {
@@ -61,7 +67,7 @@ export default function CreateUserProfilePage() {
 
         <div className="flex-1 p-8 flex flex-col gap-5">
           <div className="bg-white rounded-2xl p-8 shadow-sm flex flex-col gap-6">
-            <div className="flex flex-col gap-6">
+            <div className="grid grid-cols-2 gap-6">
               <Field label="Profile ID">
                 <input
                   readOnly
@@ -70,7 +76,22 @@ export default function CreateUserProfilePage() {
                 />
               </Field>
 
-              <Field label="Profile Name" error={errors.profileName}>
+              <Field label="Profile Status">
+                <div className="relative">
+                  <select
+                    value={form.profileStatus}
+                    onChange={(e) => handleChange('profileStatus', e.target.value)}
+                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-700 outline-none focus:border-primary appearance-none bg-white transition-colors"
+                  >
+                    {STATUSES.map((s) => (
+                      <option key={s} value={s}>{s}</option>
+                    ))}
+                  </select>
+                  <ChevronDown />
+                </div>
+              </Field>
+
+              <Field label="Profile Name" error={errors.profileName} className="col-span-2">
                 <input
                   value={form.profileName}
                   onChange={(e) => handleChange('profileName', e.target.value)}
@@ -80,17 +101,17 @@ export default function CreateUserProfilePage() {
                   }`}
                 />
               </Field>
-
-              <Field label="Profile Description">
-                <textarea
-                  value={form.profileDescription}
-                  onChange={(e) => handleChange('profileDescription', e.target.value)}
-                  rows={4}
-                  placeholder="Describe this profile role (optional)"
-                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-700 outline-none focus:border-primary transition-colors resize-none"
-                />
-              </Field>
             </div>
+
+            <Field label="Profile Description">
+              <textarea
+                value={form.profileDescription}
+                onChange={(e) => handleChange('profileDescription', e.target.value)}
+                rows={4}
+                placeholder="Describe this profile role (optional)"
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-700 outline-none focus:border-primary transition-colors resize-none"
+              />
+            </Field>
 
             {globalError && (
               <p className="text-deletered text-sm">{globalError}</p>
@@ -118,12 +139,22 @@ export default function CreateUserProfilePage() {
   )
 }
 
-function Field({ label, children, error }) {
+function Field({ label, children, error, className }) {
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className={`flex flex-col gap-1.5 ${className || ''}`}>
       <label className="text-sm font-medium text-gray-600">{label}</label>
       {children}
       {error && <p className="text-deletered text-xs">{error}</p>}
+    </div>
+  )
+}
+
+function ChevronDown() {
+  return (
+    <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2" strokeLinecap="round">
+        <polyline points="6 9 12 15 18 9" />
+      </svg>
     </div>
   )
 }
