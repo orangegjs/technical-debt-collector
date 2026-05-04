@@ -26,8 +26,8 @@ export async function logout() {
 }
 
 // → CreateUserAccountController.createUserAccount()
-export async function createUserAccount(username, password, email, accountStatus, role) {
-  return request('POST', '/api/users', { username, password, email, accountStatus, role })
+export async function createUserAccount(username, password, email, accountStatus, role, profile_picture_url) {
+  return request('POST', '/api/users', { username, password, email, accountStatus, role, profile_picture_url })
 }
 
 // → RetrieveUserAccountController.retrieveUserAccount()

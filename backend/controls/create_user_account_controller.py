@@ -12,6 +12,7 @@ class CreateUserAccountController:
         email: str,
         accountStatus: str,
         role: str,
+        profile_picture_url: str = None,
     ) -> bool:
         try:
             existing = db.query(UserAccount).filter(
@@ -26,6 +27,7 @@ class CreateUserAccountController:
                 email=email,
                 accountStatus=accountStatus,
                 role=role,
+                profile_picture_url=profile_picture_url,
             )
             db.add(new_user)
             db.commit()

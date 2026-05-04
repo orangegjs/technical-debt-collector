@@ -27,6 +27,7 @@ class UserAccountCreate(BaseModel):
     email: str
     accountStatus: str = "Active"
     role: str
+    profile_picture_url: Optional[str] = None
 
 
 class UserAccountUpdate(BaseModel):
@@ -35,6 +36,7 @@ class UserAccountUpdate(BaseModel):
     password: Optional[str] = None
     accountStatus: Optional[str] = None
     role: Optional[str] = None
+    profile_picture_url: Optional[str] = None
 
 
 class UserAccountResponse(BaseModel):
@@ -43,6 +45,7 @@ class UserAccountResponse(BaseModel):
     email: Optional[str]
     accountStatus: str
     role: Optional[str]
+    profile_picture_url: Optional[str] = None
 
     class Config:
         from_attributes = True
@@ -83,6 +86,7 @@ def create_user(payload: UserAccountCreate, db: Session = Depends(get_db)):
         email=payload.email,
         accountStatus=payload.accountStatus,
         role=payload.role,
+        profile_picture_url=payload.profile_picture_url,
     )
     if not success:
         raise HTTPException(status_code=400, detail="displayUserAccountCreatedFail")

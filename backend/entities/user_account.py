@@ -7,19 +7,21 @@ from database import Base
 class UserAccount(Base):
     __tablename__ = "user_account"
 
-    userID        = Column(Integer, primary_key=True, autoincrement=True)
-    username      = Column(String, unique=True, nullable=False)
-    email         = Column(String, unique=True)
-    password      = Column(String, nullable=False)   # stores bcrypt hash
-    accountStatus = Column(String, default="Active")  # "Active" or "Inactive"
-    role          = Column(String)                    # "User Admin", "Donee", "Platform Management", "Fund Raiser"
+    userID              = Column(Integer, primary_key=True, autoincrement=True)
+    username            = Column(String, unique=True, nullable=False)
+    email               = Column(String, unique=True)
+    password            = Column(String, nullable=False)   # stores bcrypt hash
+    accountStatus       = Column(String, default="Active")  # "Active" or "Inactive"
+    role                = Column(String)                    # "User Admin", "Donee", "Platform Management", "Fund Raiser"
+    profile_picture_url = Column(String, nullable=True)
 
     # Backward-compat alias so LoginController (untouched) can access user.password_hash
     @property
     def password_hash(self):
         return self.password
 
-    def login(self, db: Session, username: str, password: str) -> "UserAccount | None":
+    @staticmethod
+    def login(db: Session, username: str, password: str) -> "UserAccount | None":
         user = db.query(UserAccount).filter(UserAccount.username == username).first()
         if user and bcrypt.checkpw(password.encode(), user.password.encode()):
             return user
@@ -33,6 +35,7 @@ class UserAccount(Base):
         email: str,
         accountStatus: str,
         role: str,
+        profile_picture_url: str = None,
     ) -> bool:
         try:
             hashed = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
@@ -42,6 +45,7 @@ class UserAccount(Base):
                 email=email,
                 accountStatus=accountStatus,
                 role=role,
+                profile_picture_url=profile_picture_url,
             )
             db.add(new_user)
             db.commit()

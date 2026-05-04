@@ -104,6 +104,7 @@ export default function UserProfilePage() {
         email: form.email,
         accountStatus: form.status,
         role: form.role,
+        profile_picture_url: form.profile_picture_url || null,
       }
       if (form.password) payload.password = form.password
       await updateUserAccount(Number(id), payload)
@@ -175,7 +176,10 @@ export default function UserProfilePage() {
               </button>
               <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => {
                 const file = e.target.files[0]
-                if (file) handleChange('profile_picture_url', URL.createObjectURL(file))
+                if (!file) return
+                const reader = new FileReader()
+                reader.onload = (ev) => handleChange('profile_picture_url', ev.target.result)
+                reader.readAsDataURL(file)
               }} />
             </div>
             <div className="flex gap-3">
