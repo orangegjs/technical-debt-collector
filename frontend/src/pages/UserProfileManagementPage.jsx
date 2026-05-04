@@ -95,40 +95,19 @@ export default function UserProfileManagementPage() {
 }
 
 function ProfileCard({ profile, onClick }) {
-  const isActive = profile.profileStatus === 'Active'
   const desc = profile.profileDescription || ''
-  const truncated = desc.length > 80 ? desc.slice(0, 80) + '…' : desc
+  const truncated = desc.length > 120 ? desc.slice(0, 120) + '…' : desc
 
   return (
     <button
       onClick={onClick}
-      className="bg-white rounded-2xl shadow-sm px-6 py-4 flex items-center gap-4 text-left hover:shadow-md transition-shadow w-full"
+      className="bg-white rounded-2xl border border-gray-100 shadow-sm px-6 py-4 flex flex-col gap-1 text-left hover:bg-blue-50 transition-colors w-full"
     >
-      <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
-        <BadgeIcon />
-      </div>
-      <div className="flex-1 min-w-0">
-        <p className="text-sm font-semibold text-gray-800 truncate">{profile.profileName}</p>
-        {truncated && (
-          <p className="text-xs text-gray-400 mt-0.5 truncate">{truncated}</p>
-        )}
-      </div>
-      <span
-        className={`shrink-0 text-xs font-semibold px-3 py-1 rounded-full ${
-          isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-deletered'
-        }`}
-      >
-        {profile.profileStatus}
-      </span>
+      <p className="text-sm font-bold text-gray-900">{profile.profileName}</p>
+      {truncated && (
+        <p className="text-xs text-gray-500">{truncated}</p>
+      )}
     </button>
-  )
-}
-
-function BadgeIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-    </svg>
   )
 }
 
