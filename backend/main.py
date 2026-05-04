@@ -2,8 +2,10 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from database import engine, Base
-import entities.user_account  # register models
+import entities.user_account   # register models
+import entities.user_profile    # register models
 from boundaries.user_account_routes import router
+from boundaries.user_profile_routes import router as profile_router
 
 
 @asynccontextmanager
@@ -23,6 +25,7 @@ app.add_middleware(
 )
 
 app.include_router(router)
+app.include_router(profile_router)
 
 
 @app.get("/")

@@ -5,6 +5,9 @@ import LogoutPage from './pages/LogoutPage'
 import DashboardPage from './pages/DashboardPage'
 import UserProfilePage from './pages/UserProfilePage'
 import CreateAccountPage from './pages/CreateAccountPage'
+import UserProfileManagementPage from './pages/UserProfileManagementPage'
+import CreateUserProfilePage from './pages/CreateUserProfilePage'
+import EditUserProfilePage from './pages/EditUserProfilePage'
 
 export const AuthContext = createContext(null)
 
@@ -66,6 +69,30 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <CreateAccountPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/user-profile-management"
+            element={
+              <ProtectedRoute>
+                <UserProfileManagementPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/create-user-profile"
+            element={
+              <ProtectedRoute>
+                <CreateUserProfilePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/edit-user-profile/:id"
+            element={
+              <ProtectedRoute>
+                <EditUserProfilePage />
               </ProtectedRoute>
             }
           />
