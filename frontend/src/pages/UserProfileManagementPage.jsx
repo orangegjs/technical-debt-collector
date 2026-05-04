@@ -124,9 +124,6 @@ function ProfileCard({ profile, onClick }) {
 }
 
 function ProfileDetailModal({ profile, onClose, onUpdate }) {
-  const isActive = profile.profileStatus === 'Active'
-  const isSuspended = profile.profileStatus === 'Suspended'
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 p-7 flex flex-col gap-5">
@@ -150,22 +147,7 @@ function ProfileDetailModal({ profile, onClose, onUpdate }) {
                 label="Profile Description"
                 value={profile.profileDescription || <span className="text-gray-400 italic">No description</span>}
               />
-              <DetailRow
-                label="Profile Status"
-                value={
-                  <span
-                    className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${
-                      isActive
-                        ? 'bg-green-100 text-green-700'
-                        : isSuspended
-                        ? 'bg-red-100 text-deletered'
-                        : 'bg-gray-100 text-gray-600'
-                    }`}
-                  >
-                    {profile.profileStatus}
-                  </span>
-                }
-              />
+              <DetailRow label="Profile Status" value={profile.profileStatus} />
             </tbody>
           </table>
         </div>

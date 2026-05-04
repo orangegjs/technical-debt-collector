@@ -8,7 +8,7 @@ import Sidebar from '../components/Sidebar'
 import SuspendConfirmModal from '../components/SuspendConfirmModal'
 import { retrieveUserProfile, updateUserProfile, suspendUserProfile } from '../api/userProfileApi'
 
-const STATUSES = ['Active', 'Inactive', 'Suspended']
+const STATUSES = ['Active', 'Inactive']
 
 export default function EditUserProfilePage() {
   const { id } = useParams()
