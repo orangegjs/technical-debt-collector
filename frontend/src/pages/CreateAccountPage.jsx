@@ -153,13 +153,6 @@ export default function CreateAccountPage() {
           {/* Form section */}
           <div className="bg-white rounded-2xl p-8 shadow-sm flex flex-col gap-6">
             <div className="grid grid-cols-2 gap-6">
-              <Field label="User ID">
-                <input
-                  readOnly
-                  value="Auto-generated"
-                  className="w-full px-4 py-2.5 rounded-xl bg-gray-100 border border-gray-200 text-sm text-gray-400 outline-none cursor-not-allowed"
-                />
-              </Field>
               <Field label="User Name" error={errors.username}>
                 <input
                   value={form.username}

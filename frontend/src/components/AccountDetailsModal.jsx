@@ -32,7 +32,6 @@ export default function AccountDetailsModal({ user, onClose }) {
         </div>
 
         <div className="px-8 py-5 space-y-3">
-          <DetailRow label="User ID" value={user.userID} />
           <DetailRow label="Email" value={user.email} />
           <DetailRow label="Role" value={user.user_profile?.profileName ?? '—'} />
           <DetailRow label="Status" value={user.accountStatus} />
