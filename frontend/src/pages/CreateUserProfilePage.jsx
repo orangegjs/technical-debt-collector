@@ -5,7 +5,7 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Sidebar from '../components/Sidebar'
-import { createUserProfile } from '../api/userProfileApi'
+import { createUserProfile, searchUserProfile } from '../api/userProfileApi'
 
 const STATUSES = ['Active', 'Inactive']
 
@@ -29,10 +29,26 @@ export default function CreateUserProfilePage() {
     return errs
   }
 
+  async function validateRepeatProfile(profileName) {
+    try {
+      const results = await searchUserProfile(profileName.trim())
+      return results.some((p) => p.profileName.toLowerCase() === profileName.trim().toLowerCase())
+    } catch {
+      return false
+    }
+  }
+
   async function handleConfirm() {
     const errs = validateEnteredData()
     if (Object.keys(errs).length > 0) {
       setErrors(errs)
+      return
+    }
+    // validateRepeatProfile
+    const isDuplicate = await validateRepeatProfile(form.profileName)
+    if (isDuplicate) {
+      // displayDuplicateProfile
+      setErrors({ profileName: 'A profile with this name already exists.' })
       return
     }
     setSaving(true)
@@ -44,14 +60,9 @@ export default function CreateUserProfilePage() {
       )
       // displayUserProfileCreatedSuccess
       navigate('/user-profile-management')
-    } catch (err) {
-      if (err?.detail === 'displayDuplicateProfile') {
-        // validateRepeatProfile → displayDuplicateProfile
-        setErrors({ profileName: 'A profile with this name already exists.' })
-      } else {
-        // displayUserProfileCreatedFail
-        setGlobalError('Failed to create profile. Please try again.')
-      }
+    } catch {
+      // displayUserProfileCreatedFail
+      setGlobalError('Failed to create profile. Please try again.')
     } finally {
       setSaving(false)
     }

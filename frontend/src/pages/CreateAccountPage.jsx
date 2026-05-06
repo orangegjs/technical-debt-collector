@@ -5,7 +5,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Sidebar from '../components/Sidebar'
-import { createUserAccount } from '../api/userAccountApi'
+import { createUserAccount, searchUserAcc } from '../api/userAccountApi'
 import { listUserProfiles } from '../api/userProfileApi'
 
 const STATUSES = ['Active', 'Inactive']
@@ -58,9 +58,20 @@ export default function CreateAccountPage() {
     setGlobalError('')
   }
 
-  function validateInput(username, password, email, accountStatus) {
+  async function validateInput(username, password, email, accountStatus) {
     const errs = {}
-    if (!username || !username.trim()) errs.username = 'Username is required.'
+    if (!username || !username.trim()) {
+      errs.username = 'Username is required.'
+    } else {
+      try {
+        const results = await searchUserAcc(username.trim())
+        if (results.some((u) => u.username.toLowerCase() === username.trim().toLowerCase())) {
+          errs.username = 'Username is already taken.'
+        }
+      } catch {
+        // proceed — backend will catch it if the check fails
+      }
+    }
     if (!email || !EMAIL_REGEX.test(email)) {
       errs.email = 'Please enter a valid email address in the format name@example.com.'
     }
@@ -71,7 +82,7 @@ export default function CreateAccountPage() {
   }
 
   async function handleConfirm() {
-    const errs = validateInput(form.username, form.password, form.email, form.status)
+    const errs = await validateInput(form.username, form.password, form.email, form.status)
     if (Object.keys(errs).length > 0) {
       // displayInvalidInput
       setErrors(errs)
