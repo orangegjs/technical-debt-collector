@@ -6,8 +6,8 @@ import { useParams, useNavigate } from 'react-router-dom'
 import Sidebar from '../components/Sidebar'
 import SuspendConfirmModal from '../components/SuspendConfirmModal'
 import { retrieveUserAccount, updateUserAccount, suspendUserAccount } from '../api/userAccountApi'
+import { listUserProfiles } from '../api/userProfileApi'
 
-const ROLES = ['User Admin', 'Donee', 'Platform Management', 'Fund Raiser']
 const STATUSES = ['Active', 'Inactive']
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -33,11 +33,11 @@ export default function UserProfilePage() {
     email: '',
     password: '',
     status: 'Active',
-    role: 'Donee',
-    name: '',
-    age: '',
+    profileID: '',
     profile_picture_url: '',
   })
+  const [profiles, setProfiles] = useState([])
+  const [profilesLoading, setProfilesLoading] = useState(true)
   const [userId, setUserId] = useState(null)
   const [errors, setErrors] = useState({})
   const [globalError, setGlobalError] = useState('')
@@ -49,6 +49,16 @@ export default function UserProfilePage() {
   const [showPassword, setShowPassword] = useState(false)
 
   useEffect(() => {
+    listUserProfiles()
+      .then((data) => {
+        const active = data.filter((p) => p.profileStatus === 'Active')
+        setProfiles(active)
+      })
+      .catch(() => setProfiles([]))
+      .finally(() => setProfilesLoading(false))
+  }, [])
+
+  useEffect(() => {
     async function load() {
       try {
         const user = await retrieveUserAccount(Number(id))
@@ -58,9 +68,7 @@ export default function UserProfilePage() {
           email: user.email || '',
           password: '',
           status: user.accountStatus || 'Active',
-          role: user.role || 'Donee',
-          name: user.name || '',
-          age: user.age || '',
+          profileID: user.profileID ?? '',
           profile_picture_url: user.profile_picture_url || '',
         })
       } catch {
@@ -103,7 +111,7 @@ export default function UserProfilePage() {
         username: form.username,
         email: form.email,
         accountStatus: form.status,
-        role: form.role,
+        profileID: form.profileID ? Number(form.profileID) : null,
         profile_picture_url: form.profile_picture_url || null,
       }
       if (form.password) payload.password = form.password
@@ -259,12 +267,14 @@ export default function UserProfilePage() {
               <Field label="Role">
                 <div className="relative">
                   <select
-                    value={form.role}
-                    onChange={(e) => handleChange('role', e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-700 outline-none focus:border-primary appearance-none bg-white transition-colors"
+                    value={form.profileID}
+                    onChange={(e) => handleChange('profileID', e.target.value)}
+                    disabled={profilesLoading}
+                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-700 outline-none focus:border-primary appearance-none bg-white transition-colors disabled:bg-gray-50 disabled:text-gray-400"
                   >
-                    {ROLES.map((r) => (
-                      <option key={r} value={r}>{r}</option>
+                    <option value="">— No role assigned —</option>
+                    {profiles.map((p) => (
+                      <option key={p.profileID} value={p.profileID}>{p.profileName}</option>
                     ))}
                   </select>
                   <ChevronDown />

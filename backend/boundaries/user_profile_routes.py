@@ -53,6 +53,15 @@ def create_profile(payload: UserProfileCreate, db: Session = Depends(get_db)):
     return profile
 
 
+# BCE Boundary: :UserProfileManagementPage
+# Methods: displayProfileFound(result_list)
+@router.get("/profiles", response_model=list[UserProfileResponse])
+def list_profiles(db: Session = Depends(get_db)):
+    ctrl = SearchUserProfileController()
+    results = ctrl.searchUserProfile(db, "")
+    return [UserProfileResponse.model_validate(p) for p in results]
+
+
 # BCE Boundary: :SearchUserProfilePage
 # Methods: displayProfileFound(result_list), displayProfileNotFound()
 @router.get("/profiles/search")

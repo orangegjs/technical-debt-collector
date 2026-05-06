@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, relationship
 from database import Base
 
 
@@ -9,7 +9,9 @@ class UserProfile(Base):
     profileID          = Column(Integer, primary_key=True, autoincrement=True)
     profileName        = Column(String, unique=True, nullable=False)
     profileDescription = Column(String, nullable=True)
-    profileStatus      = Column(String, default="Active")  # "Active" or "Suspended"
+    profileStatus      = Column(String, default="Active")  # "Active" or "Inactive"
+
+    user_accounts = relationship("UserAccount", back_populates="user_profile")
 
     def createUserProfile(self, db: Session, profileName: str, profileDescription: str, profileStatus: str = "Active") -> bool:
         try:

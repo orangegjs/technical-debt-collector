@@ -1,6 +1,6 @@
 import bcrypt
-from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import Session
+from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy.orm import Session, relationship
 from database import Base
 
 
@@ -12,8 +12,10 @@ class UserAccount(Base):
     email               = Column(String, unique=True)
     password            = Column(String, nullable=False)   # stores bcrypt hash
     accountStatus       = Column(String, default="Active")  # "Active" or "Inactive"
-    role                = Column(String)                    # "User Admin", "Donee", "Platform Management", "Fund Raiser"
+    profile_id          = Column(Integer, ForeignKey("user_profile.profileID"), nullable=True)
     profile_picture_url = Column(String, nullable=True)
+
+    user_profile = relationship("UserProfile", back_populates="user_accounts")
 
     # Backward-compat alias so LoginController (untouched) can access user.password_hash
     @property
@@ -34,7 +36,7 @@ class UserAccount(Base):
         password: str,
         email: str,
         accountStatus: str,
-        role: str,
+        profile_id: int = None,
         profile_picture_url: str = None,
     ) -> bool:
         try:
@@ -44,7 +46,7 @@ class UserAccount(Base):
                 password=hashed,
                 email=email,
                 accountStatus=accountStatus,
-                role=role,
+                profile_id=profile_id,
                 profile_picture_url=profile_picture_url,
             )
             db.add(new_user)
@@ -61,17 +63,11 @@ class UserAccount(Base):
             user = db.query(UserAccount).filter(UserAccount.userID == uid).first()
             if not user:
                 return False
-            if "username" in user_acc and user_acc["username"] is not None:
-                user.username = user_acc["username"]
-            if "email" in user_acc and user_acc["email"] is not None:
-                user.email = user_acc["email"]
-            # Accept both "accountStatus" (new) and "status" (legacy) from callers
-            if "accountStatus" in user_acc and user_acc["accountStatus"] is not None:
-                user.accountStatus = user_acc["accountStatus"]
-            elif "status" in user_acc and user_acc["status"] is not None:
-                user.accountStatus = user_acc["status"]
-            if "role" in user_acc and user_acc["role"] is not None:
-                user.role = user_acc["role"]
+            for field in ("username", "email", "accountStatus", "profile_picture_url"):
+                if field in user_acc and user_acc[field] is not None:
+                    setattr(user, field, user_acc[field])
+            if "profileID" in user_acc:
+                user.profile_id = user_acc["profileID"]  # nullable — None is a valid clear
             if "password" in user_acc and user_acc["password"]:
                 user.password = bcrypt.hashpw(user_acc["password"].encode(), bcrypt.gensalt()).decode()
             db.commit()

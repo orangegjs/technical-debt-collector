@@ -2,12 +2,12 @@
 // Methods: validateInput(username, password, name, email, accountStatus, role),
 //          displayInvalidInput(), displayUserAccountCreatedSuccess(), displayUserAccountCreatedFail()
 
-import React, { useState, useRef } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Sidebar from '../components/Sidebar'
 import { createUserAccount } from '../api/userAccountApi'
+import { listUserProfiles } from '../api/userProfileApi'
 
-const ROLES = ['User Admin', 'Donee', 'Platform Management', 'Fund Raiser']
 const STATUSES = ['Active', 'Inactive']
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -31,13 +31,26 @@ export default function CreateAccountPage() {
     email: '',
     password: '',
     status: 'Active',
-    role: 'Donee',
+    profileID: '',
     profile_picture_url: '',
   })
+  const [profiles, setProfiles] = useState([])
+  const [profilesLoading, setProfilesLoading] = useState(true)
   const [errors, setErrors] = useState({})
   const [globalError, setGlobalError] = useState('')
   const [saving, setSaving] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+
+  useEffect(() => {
+    listUserProfiles()
+      .then((data) => {
+        const active = data.filter((p) => p.profileStatus === 'Active')
+        setProfiles(active)
+        if (active.length > 0) setForm((prev) => ({ ...prev, profileID: active[0].profileID }))
+      })
+      .catch(() => setProfiles([]))
+      .finally(() => setProfilesLoading(false))
+  }, [])
 
   function handleChange(field, value) {
     setForm((prev) => ({ ...prev, [field]: value }))
@@ -45,7 +58,7 @@ export default function CreateAccountPage() {
     setGlobalError('')
   }
 
-  function validateInput(username, password, email, accountStatus, role) {
+  function validateInput(username, password, email, accountStatus) {
     const errs = {}
     if (!username || !username.trim()) errs.username = 'Username is required.'
     if (!email || !EMAIL_REGEX.test(email)) {
@@ -54,20 +67,11 @@ export default function CreateAccountPage() {
     const pwErr = validatePassword(password)
     if (pwErr) errs.password = pwErr
     if (!['Active', 'Inactive'].includes(accountStatus)) errs.status = 'Status must be Active or Inactive.'
-    if (!['User Admin', 'Donee', 'Platform Management', 'Fund Raiser'].includes(role)) {
-      errs.role = 'Please select a valid role.'
-    }
     return errs
   }
 
   async function handleConfirm() {
-    const errs = validateInput(
-      form.username,
-      form.password,
-      form.email,
-      form.status,
-      form.role,
-    )
+    const errs = validateInput(form.username, form.password, form.email, form.status)
     if (Object.keys(errs).length > 0) {
       // displayInvalidInput
       setErrors(errs)
@@ -81,7 +85,7 @@ export default function CreateAccountPage() {
         form.password,
         form.email,
         form.status,
-        form.role,
+        form.profileID ? Number(form.profileID) : null,
         form.profile_picture_url || null,
       )
       navigate('/dashboard')
@@ -200,14 +204,21 @@ export default function CreateAccountPage() {
                   <ChevronDown />
                 </div>
               </Field>
-              <Field label="Role">
+              <Field label="Role" error={errors.profileID}>
                 <div className="relative">
                   <select
-                    value={form.role}
-                    onChange={(e) => handleChange('role', e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-700 outline-none focus:border-primary appearance-none bg-white transition-colors"
+                    value={form.profileID}
+                    onChange={(e) => handleChange('profileID', e.target.value)}
+                    disabled={profilesLoading}
+                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-700 outline-none focus:border-primary appearance-none bg-white transition-colors disabled:bg-gray-50 disabled:text-gray-400"
                   >
-                    {ROLES.map((r) => <option key={r} value={r}>{r}</option>)}
+                    {profilesLoading && <option value="">Loading profiles…</option>}
+                    {!profilesLoading && profiles.length === 0 && (
+                      <option value="">No profiles available</option>
+                    )}
+                    {profiles.map((p) => (
+                      <option key={p.profileID} value={p.profileID}>{p.profileName}</option>
+                    ))}
                   </select>
                   <ChevronDown />
                 </div>

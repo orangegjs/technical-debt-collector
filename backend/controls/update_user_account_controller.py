@@ -10,9 +10,11 @@ class UpdateUserAccountController:
             user = db.query(UserAccount).filter(UserAccount.userID == uid).first()
             if not user:
                 return False
-            for field in ("username", "email", "accountStatus", "role", "profile_picture_url"):
+            for field in ("username", "email", "accountStatus", "profile_picture_url"):
                 if field in user_acc and user_acc[field] is not None:
                     setattr(user, field, user_acc[field])
+            if "profileID" in user_acc:
+                user.profile_id = user_acc["profileID"]  # nullable — None clears the assignment
             if "password" in user_acc and user_acc["password"]:
                 user.password = bcrypt.hashpw(user_acc["password"].encode(), bcrypt.gensalt()).decode()
             db.commit()

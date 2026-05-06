@@ -1,6 +1,6 @@
 from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from database import get_db
@@ -26,7 +26,7 @@ class UserAccountCreate(BaseModel):
     password: str
     email: str
     accountStatus: str = "Active"
-    role: str
+    profileID: Optional[int] = None
     profile_picture_url: Optional[str] = None
 
 
@@ -35,8 +35,17 @@ class UserAccountUpdate(BaseModel):
     email: Optional[str] = None
     password: Optional[str] = None
     accountStatus: Optional[str] = None
-    role: Optional[str] = None
+    profileID: Optional[int] = None
     profile_picture_url: Optional[str] = None
+
+
+class NestedUserProfile(BaseModel):
+    profileID: int
+    profileName: str
+    profileDescription: Optional[str] = None
+
+    class Config:
+        from_attributes = True
 
 
 class UserAccountResponse(BaseModel):
@@ -44,11 +53,21 @@ class UserAccountResponse(BaseModel):
     username: str
     email: Optional[str]
     accountStatus: str
-    role: Optional[str]
+    profileID: Optional[int] = None
+    user_profile: Optional[NestedUserProfile] = None
     profile_picture_url: Optional[str] = None
 
-    class Config:
-        from_attributes = True
+
+def _to_response(user) -> UserAccountResponse:
+    return UserAccountResponse(
+        userID=user.userID,
+        username=user.username,
+        email=user.email,
+        accountStatus=user.accountStatus,
+        profileID=user.profile_id,
+        user_profile=NestedUserProfile.model_validate(user.user_profile) if user.user_profile else None,
+        profile_picture_url=user.profile_picture_url,
+    )
 
 
 # ── Auth routes ────────────────────────────────────────────────────────────────
@@ -61,7 +80,7 @@ def login(payload: LoginRequest, db: Session = Depends(get_db)):
     user = ctrl.login(db, payload.username, payload.password)
     if not user:
         raise HTTPException(status_code=401, detail="Invalid username or password")
-    return user
+    return _to_response(user)
 
 
 # BCE Boundary: :LogoutPage
@@ -85,14 +104,14 @@ def create_user(payload: UserAccountCreate, db: Session = Depends(get_db)):
         password=payload.password,
         email=payload.email,
         accountStatus=payload.accountStatus,
-        role=payload.role,
+        profile_id=payload.profileID,
         profile_picture_url=payload.profile_picture_url,
     )
     if not success:
         raise HTTPException(status_code=400, detail="displayUserAccountCreatedFail")
     from entities.user_account import UserAccount as UA
     user = db.query(UA).filter(UA.username == payload.username).first()
-    return user
+    return _to_response(user)
 
 
 # BCE Boundary: :SearchUserAccountPage
@@ -101,7 +120,7 @@ def create_user(payload: UserAccountCreate, db: Session = Depends(get_db)):
 def search_users(q: str = "", db: Session = Depends(get_db)):
     ctrl = SearchUserAccountController()
     results = ctrl.searchUserAcc(db, q)
-    return [UserAccountResponse.model_validate(u) for u in results]
+    return [_to_response(u) for u in results]
 
 
 # BCE Boundary: :RetrieveUserAccountPage
@@ -112,7 +131,7 @@ def get_user(user_id: int, db: Session = Depends(get_db)):
     user = ctrl.retrieveUserAccount(db, user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-    return user
+    return _to_response(user)
 
 
 # BCE Boundary: :UpdateUserAccountPage
@@ -126,7 +145,8 @@ def update_user(user_id: int, payload: UserAccountUpdate, db: Session = Depends(
     if not success:
         raise HTTPException(status_code=400, detail="displayInputErrorMessage")
     retrieve_ctrl = RetrieveUserAccountController()
-    return retrieve_ctrl.retrieveUserAccount(db, user_id)
+    user = retrieve_ctrl.retrieveUserAccount(db, user_id)
+    return _to_response(user)
 
 
 # BCE Boundary: :SuspendUserAccountPage
@@ -138,4 +158,5 @@ def suspend_user(user_id: int, db: Session = Depends(get_db)):
     if not success:
         raise HTTPException(status_code=404, detail="displaySuspendFail")
     retrieve_ctrl = RetrieveUserAccountController()
-    return retrieve_ctrl.retrieveUserAccount(db, user_id)
+    user = retrieve_ctrl.retrieveUserAccount(db, user_id)
+    return _to_response(user)

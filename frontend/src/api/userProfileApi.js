@@ -15,6 +15,11 @@ async function request(method, path, body) {
   return data
 }
 
+// → SearchUserProfileController.searchUserProfile() — returns all profiles
+export async function listUserProfiles() {
+  return request('GET', '/api/profiles')
+}
+
 // → CreateUserProfileController.createUserProfile()
 export async function createUserProfile(profileName, profileDescription, profileStatus = 'Active') {
   return request('POST', '/api/profiles', { profileName, profileDescription, profileStatus })

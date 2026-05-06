@@ -11,7 +11,7 @@ class CreateUserAccountController:
         password: str,
         email: str,
         accountStatus: str,
-        role: str,
+        profile_id: int = None,
         profile_picture_url: str = None,
     ) -> bool:
         try:
@@ -26,7 +26,7 @@ class CreateUserAccountController:
                 password=hashed,
                 email=email,
                 accountStatus=accountStatus,
-                role=role,
+                profile_id=profile_id,
                 profile_picture_url=profile_picture_url,
             )
             db.add(new_user)
