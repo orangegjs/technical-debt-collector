@@ -9,10 +9,6 @@ export default function UserCard({ user, onClick }) {
       <Avatar url={user.profile_picture_url} />
       <div className="flex gap-8 text-sm font-medium text-gray-700">
         <span>
-          <span className="text-gray-400 mr-1">User ID:</span>
-          {user.userID}
-        </span>
-        <span>
           <span className="text-gray-400 mr-1">User Name:</span>
           {user.username}
         </span>
