@@ -50,7 +50,7 @@ export default function UserProfilePage() {
 
   useEffect(() => {
     listUserProfiles()
-      .then((data) => setProfiles(data))
+      .then((data) => setProfiles(data.filter((p) => p.profileStatus === 'Active')))
       .catch(() => setProfiles([]))
       .finally(() => setProfilesLoading(false))
   }, [])

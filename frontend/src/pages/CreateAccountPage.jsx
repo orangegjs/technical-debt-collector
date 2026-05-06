@@ -44,8 +44,9 @@ export default function CreateAccountPage() {
   useEffect(() => {
     listUserProfiles()
       .then((data) => {
-        setProfiles(data)
-        if (data.length > 0) setForm((prev) => ({ ...prev, profileID: data[0].profileID }))
+        const visible = data.filter((p) => p.profileStatus === 'Active')
+        setProfiles(visible)
+        if (visible.length > 0) setForm((prev) => ({ ...prev, profileID: visible[0].profileID }))
       })
       .catch(() => setProfiles([]))
       .finally(() => setProfilesLoading(false))
