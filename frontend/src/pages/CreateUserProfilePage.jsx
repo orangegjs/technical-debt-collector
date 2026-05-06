@@ -26,6 +26,7 @@ export default function CreateUserProfilePage() {
   function validateEnteredData() {
     const errs = {}
     if (!form.profileName.trim()) errs.profileName = 'Profile name is required.'
+    if (!form.profileDescription.trim()) errs.profileDescription = 'Profile description is required.'
     return errs
   }
 
@@ -55,7 +56,7 @@ export default function CreateUserProfilePage() {
     try {
       await createUserProfile(
         form.profileName.trim(),
-        form.profileDescription.trim() || null,
+        form.profileDescription.trim(),
         form.profileStatus,
       )
       // displayUserProfileCreatedSuccess
@@ -114,13 +115,15 @@ export default function CreateUserProfilePage() {
               </Field>
             </div>
 
-            <Field label="Profile Description">
+            <Field label="Profile Description" error={errors.profileDescription}>
               <textarea
                 value={form.profileDescription}
                 onChange={(e) => handleChange('profileDescription', e.target.value)}
                 rows={4}
-                placeholder="Describe this profile role (optional)"
-                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-700 outline-none focus:border-primary transition-colors resize-none"
+                placeholder="Describe this profile role"
+                className={`w-full px-4 py-2.5 rounded-xl border text-sm text-gray-700 outline-none focus:border-primary transition-colors resize-none ${
+                  errors.profileDescription ? 'border-deletered' : 'border-gray-200'
+                }`}
               />
             </Field>
 
