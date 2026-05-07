@@ -5,7 +5,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import Sidebar from '../components/Sidebar'
 import SuspendConfirmModal from '../components/SuspendConfirmModal'
-import { retrieveUserAccount, updateUserAccount, suspendUserAccount } from '../api/userAccountApi'
+import { retrieveUserAccount, updateUserAccount } from '../api/userAccountApi'
 import { listUserProfiles } from '../api/userProfileApi'
 
 const STATUSES = ['Active', 'Inactive']
@@ -39,12 +39,12 @@ export default function UserProfilePage() {
   const [profiles, setProfiles] = useState([])
   const [profilesLoading, setProfilesLoading] = useState(true)
   const [userId, setUserId] = useState(null)
+  const [originalStatus, setOriginalStatus] = useState('Active')
   const [errors, setErrors] = useState({})
   const [globalError, setGlobalError] = useState('')
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
-  const [showDelete, setShowDelete] = useState(false)
-  const [deleting, setDeleting] = useState(false)
+  const [showConfirm, setShowConfirm] = useState(false)
   const [editing, setEditing] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
 
@@ -60,6 +60,7 @@ export default function UserProfilePage() {
       try {
         const user = await retrieveUserAccount(Number(id))
         setUserId(user.userID)
+        setOriginalStatus(user.accountStatus || 'Active')
         setForm({
           username: user.username || '',
           email: user.email || '',
@@ -96,12 +97,7 @@ export default function UserProfilePage() {
     return errs
   }
 
-  async function handleConfirm() {
-    const errs = validate()
-    if (Object.keys(errs).length > 0) {
-      setErrors(errs)
-      return
-    }
+  async function doUpdate() {
     setSaving(true)
     try {
       const payload = {
@@ -117,26 +113,26 @@ export default function UserProfilePage() {
       setGlobalError('')
       navigate('/dashboard')
     } catch {
-      // displayInputErrorMessage
+      // displayInputErrorMessage / displaySuspendFail
       setGlobalError('Failed to update account. Please check your inputs.')
+      setShowConfirm(false)
     } finally {
       setSaving(false)
     }
   }
 
-  async function handleSuspend() {
-    setDeleting(true)
-    try {
-      await suspendUserAccount(Number(id))
-      // displaySuspendSuccess
-      navigate('/dashboard')
-    } catch {
-      // displaySuspendFail
-      setGlobalError('Failed to suspend account.')
-      setShowDelete(false)
-    } finally {
-      setDeleting(false)
+  async function handleConfirm() {
+    const errs = validate()
+    if (Object.keys(errs).length > 0) {
+      setErrors(errs)
+      return
     }
+    // displayConfirmationMessage when transitioning to Inactive
+    if (form.status === 'Inactive' && originalStatus !== 'Inactive') {
+      setShowConfirm(true)
+      return
+    }
+    await doUpdate()
   }
 
   if (loading) {
@@ -284,12 +280,6 @@ export default function UserProfilePage() {
                 Cancel
               </button>
               <button
-                onClick={() => setShowDelete(true)}
-                className="px-5 py-2 rounded-lg bg-deletered text-white text-sm font-semibold hover:bg-red-700 transition-colors"
-              >
-                Suspend Account
-              </button>
-              <button
                 onClick={handleConfirm}
                 disabled={saving}
                 className="px-5 py-2 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-blue-700 transition-colors disabled:opacity-60"
@@ -301,11 +291,13 @@ export default function UserProfilePage() {
         </div>
       </main>
 
-      {showDelete && (
+      {showConfirm && (
         <SuspendConfirmModal
-          onConfirm={handleSuspend}
-          onCancel={() => setShowDelete(false)}
-          loading={deleting}
+          onConfirm={doUpdate}
+          onCancel={() => setShowConfirm(false)}
+          loading={saving}
+          title="Set Account to Inactive?"
+          message="Setting this account to Inactive will deactivate the user. You can reactivate it later by changing the status back to Active."
         />
       )}
     </div>

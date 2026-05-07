@@ -6,7 +6,7 @@ import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import Sidebar from '../components/Sidebar'
 import SuspendConfirmModal from '../components/SuspendConfirmModal'
-import { retrieveUserProfile, updateUserProfile, suspendUserProfile } from '../api/userProfileApi'
+import { retrieveUserProfile, updateUserProfile } from '../api/userProfileApi'
 
 const STATUSES = ['Active', 'Inactive']
 
@@ -20,12 +20,12 @@ export default function EditUserProfilePage() {
     profileStatus: 'Active',
   })
   const [profileID, setProfileID] = useState(null)
+  const [originalStatus, setOriginalStatus] = useState('Active')
   const [errors, setErrors] = useState({})
   const [globalError, setGlobalError] = useState('')
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
-  const [showSuspend, setShowSuspend] = useState(false)
-  const [suspending, setSuspending] = useState(false)
+  const [showConfirm, setShowConfirm] = useState(false)
 
   useEffect(() => {
     async function load() {
@@ -33,6 +33,7 @@ export default function EditUserProfilePage() {
         // displayUserProfile()
         const profile = await retrieveUserProfile(Number(id))
         setProfileID(profile.profileID)
+        setOriginalStatus(profile.profileStatus || 'Active')
         setForm({
           profileName: profile.profileName || '',
           profileDescription: profile.profileDescription || '',
@@ -59,13 +60,7 @@ export default function EditUserProfilePage() {
     return errs
   }
 
-  async function handleConfirm() {
-    const errs = validateEnteredData()
-    if (Object.keys(errs).length > 0) {
-      // displayInputErrorMessage
-      setErrors(errs)
-      return
-    }
+  async function doUpdate() {
     setSaving(true)
     try {
       await updateUserProfile(Number(id), {
@@ -73,29 +68,30 @@ export default function EditUserProfilePage() {
         profileDescription: form.profileDescription.trim() || null,
         profileStatus: form.profileStatus,
       })
-      // displayUpdateSuccess
+      // displayUpdateSuccess / displaySuspendSuccess
       navigate('/user-profile-management')
     } catch {
-      // displayInputErrorMessage
+      // displayInputErrorMessage / displaySuspendFail
       setGlobalError('Failed to update profile. Please check your inputs.')
+      setShowConfirm(false)
     } finally {
       setSaving(false)
     }
   }
 
-  async function handleSuspend() {
-    setSuspending(true)
-    try {
-      await suspendUserProfile(Number(id))
-      // displaySuspendSuccess
-      navigate('/user-profile-management')
-    } catch {
-      // displaySuspendFail
-      setGlobalError('Failed to suspend profile.')
-      setShowSuspend(false)
-    } finally {
-      setSuspending(false)
+  async function handleConfirm() {
+    const errs = validateEnteredData()
+    if (Object.keys(errs).length > 0) {
+      // displayInputErrorMessage
+      setErrors(errs)
+      return
     }
+    // displayConfirmationMessage when transitioning to Inactive
+    if (form.profileStatus === 'Inactive' && originalStatus !== 'Inactive') {
+      setShowConfirm(true)
+      return
+    }
+    await doUpdate()
   }
 
   if (loading) {
@@ -108,8 +104,6 @@ export default function EditUserProfilePage() {
       </div>
     )
   }
-
-  const isSuspended = form.profileStatus === 'Suspended'
 
   return (
     <div className="flex min-h-screen bg-lightbg">
@@ -161,7 +155,7 @@ export default function EditUserProfilePage() {
                 value={form.profileDescription}
                 onChange={(e) => handleChange('profileDescription', e.target.value)}
                 rows={4}
-                placeholder="Describe this profile role (optional)"
+                placeholder="Describe this profile role"
                 className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-700 outline-none focus:border-primary transition-colors resize-none"
               />
             </Field>
@@ -178,13 +172,6 @@ export default function EditUserProfilePage() {
                 Cancel
               </button>
               <button
-                onClick={() => setShowSuspend(true)}
-                disabled={isSuspended}
-                className="px-5 py-2 rounded-lg bg-deletered text-white text-sm font-semibold hover:bg-red-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                Suspend Profile
-              </button>
-              <button
                 onClick={handleConfirm}
                 disabled={saving}
                 className="px-5 py-2 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-blue-700 transition-colors disabled:opacity-60"
@@ -196,11 +183,13 @@ export default function EditUserProfilePage() {
         </div>
       </main>
 
-      {showSuspend && (
+      {showConfirm && (
         <SuspendConfirmModal
-          onConfirm={handleSuspend}
-          onCancel={() => setShowSuspend(false)}
-          loading={suspending}
+          onConfirm={doUpdate}
+          onCancel={() => setShowConfirm(false)}
+          loading={saving}
+          title="Set Profile to Inactive?"
+          message="Setting this profile to Inactive will hide it from the role assignment dropdown. You can reactivate it later by changing the status back to Active."
         />
       )}
     </div>
