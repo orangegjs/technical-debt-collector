@@ -1,5 +1,5 @@
 // BCE Boundary: :LoginPage
-// Methods: displayUserAdminDashboard(), displayLoginFail()
+// Methods: displayUserAdminDashboard(), displayPlatformManagementDashboard(), displayLoginFail()
 
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -26,7 +26,14 @@ export default function LoginPage() {
     try {
       const user = await apiLogin(username, password)
       login(user)
-      navigate('/dashboard')
+      const profileName = user?.user_profile?.profileName
+      if (profileName === 'Platform Management') {
+        // displayPlatformManagementDashboard
+        navigate('/fra-category-management')
+      } else {
+        // displayUserAdminDashboard (and safe fallback for all other roles)
+        navigate('/dashboard')
+      }
     } catch (err) {
       // displayLoginFail
       setError('Invalid username or password. Please try again.')

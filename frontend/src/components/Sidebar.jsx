@@ -7,7 +7,9 @@ import Logo from './Logo'
 export default function Sidebar() {
   const navigate = useNavigate()
   const location = useLocation()
-  const { logout } = useAuth()
+  const { user, logout } = useAuth()
+
+  const profileName = user?.user_profile?.profileName
 
   async function handleLogout() {
     try {
@@ -29,34 +31,59 @@ export default function Sidebar() {
     '/edit-user-profile',
   ].some((p) => location.pathname.startsWith(p))
 
+  const isFRACategory = [
+    '/fra-category-management',
+    '/create-fra-category',
+    '/edit-fra-category',
+  ].some((p) => location.pathname.startsWith(p))
+
   return (
     <aside className="w-[220px] h-screen sticky top-0 bg-white flex flex-col shadow-sm shrink-0 overflow-y-auto">
       <div className="p-5 border-b border-gray-100">
         <Logo size="sm" />
       </div>
       <nav className="flex flex-col gap-1 p-3 mt-2">
-        <button
-          onClick={() => navigate('/dashboard')}
-          className={`flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium text-sm text-left transition-colors ${
-            isUserAccount
-              ? 'bg-blue-50 text-primary'
-              : 'text-gray-500 hover:bg-gray-50'
-          }`}
-        >
-          <PersonIcon />
-          User Account
-        </button>
-        <button
-          onClick={() => navigate('/user-profile-management')}
-          className={`flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium text-sm text-left transition-colors ${
-            isUserProfile
-              ? 'bg-blue-50 text-primary'
-              : 'text-gray-500 hover:bg-gray-50'
-          }`}
-        >
-          <BadgeIcon />
-          User Profile
-        </button>
+        {profileName === 'User Admin' && (
+          <>
+            <button
+              onClick={() => navigate('/dashboard')}
+              className={`flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium text-sm text-left transition-colors ${
+                isUserAccount
+                  ? 'bg-blue-50 text-primary'
+                  : 'text-gray-500 hover:bg-gray-50'
+              }`}
+            >
+              <PersonIcon />
+              User Account
+            </button>
+            <button
+              onClick={() => navigate('/user-profile-management')}
+              className={`flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium text-sm text-left transition-colors ${
+                isUserProfile
+                  ? 'bg-blue-50 text-primary'
+                  : 'text-gray-500 hover:bg-gray-50'
+              }`}
+            >
+              <BadgeIcon />
+              User Profile
+            </button>
+          </>
+        )}
+
+        {profileName === 'Platform Management' && (
+          <button
+            onClick={() => navigate('/fra-category-management')}
+            className={`flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium text-sm text-left transition-colors ${
+              isFRACategory
+                ? 'bg-blue-50 text-primary'
+                : 'text-gray-500 hover:bg-gray-50'
+            }`}
+          >
+            <FolderIcon />
+            FRA Category
+          </button>
+        )}
+
         <button
           onClick={handleLogout}
           className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-cancelgray font-medium text-sm text-left hover:bg-gray-50 transition-colors"
@@ -81,6 +108,14 @@ function BadgeIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+    </svg>
+  )
+}
+
+function FolderIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
     </svg>
   )
 }

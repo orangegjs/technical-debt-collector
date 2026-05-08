@@ -8,6 +8,9 @@ import CreateAccountPage from './pages/CreateAccountPage'
 import UserProfileManagementPage from './pages/UserProfileManagementPage'
 import CreateUserProfilePage from './pages/CreateUserProfilePage'
 import EditUserProfilePage from './pages/EditUserProfilePage'
+import FRACategoryManagementPage from './pages/FRACategoryManagementPage'
+import CreateFRACategoryPage from './pages/CreateFRACategoryPage'
+import EditFRACategoryPage from './pages/EditFRACategoryPage'
 
 export const AuthContext = createContext(null)
 
@@ -93,6 +96,30 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <EditUserProfilePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/fra-category-management"
+            element={
+              <ProtectedRoute>
+                <FRACategoryManagementPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/create-fra-category"
+            element={
+              <ProtectedRoute>
+                <CreateFRACategoryPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/edit-fra-category/:id"
+            element={
+              <ProtectedRoute>
+                <EditFRACategoryPage />
               </ProtectedRoute>
             }
           />

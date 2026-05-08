@@ -50,16 +50,15 @@ def test_create_user_account_success():
             "password": "TestP@ssw0rd123!",
             "email": "test@example.com",
             "accountStatus": "Active",
-            "role": "User Admin"
         }
     )
-    
+
     assert response.status_code == 201
     data = response.json()
     assert data["username"] == "testuser"
     assert data["email"] == "test@example.com"
     assert data["accountStatus"] == "Active"
-    assert data["role"] == "User Admin"
+    assert "userID" in data
     assert "password" not in data  # Password should NOT be in response
 
 # Tries to create two users with the same username and checks the second one is rejected with status 400
