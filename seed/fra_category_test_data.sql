@@ -1,0 +1,11 @@
+-- FundBridger FRA Category test data (9 records)
+
+INSERT INTO fra_category ("categoryName", "categoryDescription", "categoryStatus") VALUES ('Education & Tuition', 'Helps students and learners raise funds for tuition fees, educational materials, scholarships, and academic programmes.', 'Active');
+INSERT INTO fra_category ("categoryName", "categoryDescription", "categoryStatus") VALUES ('Emergency & Crisis', 'Provides urgent financial support for individuals and families facing sudden and unexpected hardships such as accidents or loss of income.', 'Active');
+INSERT INTO fra_category ("categoryName", "categoryDescription", "categoryStatus") VALUES ('Memorial & Funeral', 'Assists families in covering funeral arrangements, memorial services, and related expenses during times of grief and loss.', 'Active');
+INSERT INTO fra_category ("categoryName", "categoryDescription", "categoryStatus") VALUES ('Community Projects', 'Funds initiatives that benefit local communities, including neighbourhood improvements, public facilities, and social welfare programmes.', 'Active');
+INSERT INTO fra_category ("categoryName", "categoryDescription", "categoryStatus") VALUES ('Animal & Pets', 'Supports animal rescue, veterinary care, shelter operations, and welfare programmes for pets and wildlife.', 'Active');
+INSERT INTO fra_category ("categoryName", "categoryDescription", "categoryStatus") VALUES ('Arts & Culture', 'Enables artists, performers, and cultural organisations to fund creative projects, exhibitions, performances, and cultural preservation efforts.', 'Active');
+INSERT INTO fra_category ("categoryName", "categoryDescription", "categoryStatus") VALUES ('Environment & Conservation', 'Raises funds for environmental protection, conservation efforts, sustainability projects, and awareness campaigns.', 'Active');
+INSERT INTO fra_category ("categoryName", "categoryDescription", "categoryStatus") VALUES ('Disaster Relief', 'Provides immediate financial assistance to individuals and communities affected by natural or man-made disasters such as floods, fires, or earthquakes.', 'Active');
+INSERT INTO fra_category ("categoryName", "categoryDescription", "categoryStatus") VALUES ('Sports & Recreation', 'Supports athletes, sports clubs, and recreational programmes in funding training, equipment, competitions, and community sports events.', 'Active');
