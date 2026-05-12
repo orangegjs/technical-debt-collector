@@ -5,9 +5,11 @@ from database import engine, Base
 import entities.user_account   # register models
 import entities.user_profile    # register models
 import entities.fra_category    # register models
+import entities.fra_activity    # register models
 from boundaries.user_account_routes import router
 from boundaries.user_profile_routes import router as profile_router
 from boundaries.fra_category_routes import router as category_router
+from boundaries.fra_activity_routes import router as fra_router
 
 
 @asynccontextmanager
@@ -29,6 +31,7 @@ app.add_middleware(
 app.include_router(router)
 app.include_router(profile_router)
 app.include_router(category_router)
+app.include_router(fra_router)
 
 
 @app.get("/")

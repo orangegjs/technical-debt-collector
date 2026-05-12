@@ -37,6 +37,12 @@ export default function Sidebar() {
     '/edit-fra-category',
   ].some((p) => location.pathname.startsWith(p))
 
+  const isFRA = [
+    '/fra-management',
+    '/create-fra',
+    '/edit-fra',
+  ].some((p) => location.pathname.startsWith(p))
+
   return (
     <aside className="w-[220px] h-screen sticky top-0 bg-white flex flex-col shadow-sm shrink-0 overflow-y-auto">
       <div className="p-5 border-b border-gray-100">
@@ -71,17 +77,30 @@ export default function Sidebar() {
         )}
 
         {profileName === 'Platform Management' && (
-          <button
-            onClick={() => navigate('/fra-category-management')}
-            className={`flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium text-sm text-left transition-colors ${
-              isFRACategory
-                ? 'bg-blue-50 text-primary'
-                : 'text-gray-500 hover:bg-gray-50'
-            }`}
-          >
-            <FolderIcon />
-            FRA Category
-          </button>
+          <>
+            <button
+              onClick={() => navigate('/fra-management')}
+              className={`flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium text-sm text-left transition-colors ${
+                isFRA
+                  ? 'bg-blue-50 text-primary'
+                  : 'text-gray-500 hover:bg-gray-50'
+              }`}
+            >
+              <MegaphoneIcon />
+              FRA Activity
+            </button>
+            <button
+              onClick={() => navigate('/fra-category-management')}
+              className={`flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium text-sm text-left transition-colors ${
+                isFRACategory
+                  ? 'bg-blue-50 text-primary'
+                  : 'text-gray-500 hover:bg-gray-50'
+              }`}
+            >
+              <FolderIcon />
+              FRA Category
+            </button>
+          </>
         )}
 
         <button
@@ -116,6 +135,14 @@ function FolderIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+    </svg>
+  )
+}
+
+function MegaphoneIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 11v2a1 1 0 0 0 1 1h2l3 6h2l-1-6h4l5 3V7l-5 3H4a1 1 0 0 0-1 1z" />
     </svg>
   )
 }

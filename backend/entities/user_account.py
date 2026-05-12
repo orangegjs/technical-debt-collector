@@ -16,6 +16,7 @@ class UserAccount(Base):
     profile_picture_url = Column(String, nullable=True)
 
     user_profile = relationship("UserProfile", back_populates="user_accounts")
+    fra_activities = relationship("FRAActivity", back_populates="fra_owner")
 
     # Backward-compat alias so LoginController (untouched) can access user.password_hash
     @property
