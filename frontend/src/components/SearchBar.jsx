@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-export default function SearchBar({ onSearch }) {
+export default function SearchBar({ onSearch, placeholder = 'Search by User ID, User Name......' }) {
   const [value, setValue] = useState('')
 
   function handleSubmit(e) {
@@ -19,7 +19,7 @@ export default function SearchBar({ onSearch }) {
           type="text"
           value={value}
           onChange={(e) => setValue(e.target.value)}
-          placeholder="Search by User ID, User Name......"
+          placeholder={placeholder}
           className="flex-1 outline-none text-sm text-gray-700 bg-transparent placeholder-gray-400"
         />
       </div>

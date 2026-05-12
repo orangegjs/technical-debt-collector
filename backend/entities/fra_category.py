@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, relationship
 from database import Base
 
 
@@ -10,6 +10,8 @@ class FRACategory(Base):
     categoryName        = Column(String, unique=True, nullable=False)
     categoryDescription = Column(String, nullable=True)
     categoryStatus      = Column(String, default="Active")  # "Active" or "Inactive"
+
+    fra_activities = relationship("FRAActivity", back_populates="fra_category")
 
     def createCategory(self, db: Session, categoryName: str, categoryDescription: str, categoryStatus: str = "Active") -> bool:
         try:
