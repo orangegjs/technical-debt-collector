@@ -26,8 +26,11 @@ export default function LoginPage() {
     try {
       const user = await apiLogin(username, password)
       login(user)
-      const profileName = user?.user_profile?.profileName
-      if (profileName === 'Platform Management') {
+      const profileName = (user?.user_profile?.profileName || '').trim().toLowerCase()
+      if (profileName === 'fund raiser' || profileName === 'fundraiser') {
+        // displayFundRaiserDashboard
+        navigate('/fra-management')
+      } else if (profileName === 'platform management') {
         // displayPlatformManagementDashboard
         navigate('/fra-management')
       } else {
