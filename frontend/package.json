@@ -7,8 +7,8 @@
     "dev": "vite",
     "build": "node node_modules/vite/bin/vite.js build",
     "preview": "vite preview",
-    "test": "vitest run",
-    "test:watch": "vitest"
+    "test": "node node_modules/vitest/vitest.mjs run",
+    "test:watch": "node node_modules/vitest/vitest.mjs"
   },
   "dependencies": {
     "react": "^18.2.0",
