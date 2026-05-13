@@ -46,11 +46,9 @@ jobs:
         working-directory: ./frontend
         run: npm run build
       
-      - name: Run tests
+      - name: Run Vitest test suite
         working-directory: ./frontend
-        run: |
-          npm test --if-present || echo "ℹ No tests configured - skipping"
-        continue-on-error: true
+        run: npm test
       
       - name: Summary
         run: |
