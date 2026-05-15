@@ -27,12 +27,15 @@ export default function LoginPage() {
       const user = await apiLogin(username, password)
       login(user)
       const profileName = (user?.user_profile?.profileName || '').trim().toLowerCase()
-      if (profileName === 'fund raiser' || profileName === 'fundraiser') {
+      if (profileName === 'donee'){
+        // displayDoneeDashboard
+        navigate('/donee')
+      } else if (profileName === 'fund raiser' || profileName === 'fundraiser') {
         // displayFundRaiserDashboard
-        navigate('/fra-management')
+        navigate('/fras')
       } else if (profileName === 'platform management') {
         // displayPlatformManagementDashboard
-        navigate('/fra-management')
+        navigate('/categories')
       } else {
         // displayUserAdminDashboard (and safe fallback for all other roles)
         navigate('/dashboard')
