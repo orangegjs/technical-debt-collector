@@ -1,0 +1,107 @@
+[frontend/src/pages/CreateFRAPage.jsx]
+// displayFRACreatedSuccess
+navigate('/fra-management')
+// displayDuplicateFRA
+setErrors({ fraName: 'FRA name already exists.' })
+// displayFRACreatedFail
+setGlobalError('Failed to create FRA. Please try again.')
+
+[frontend/src/pages/CreateFRACategoryPage.jsx]
+// displayFRACategoryCreatedSuccess
+navigate('/fra-category-management')
+// displayDuplicateCategory
+setErrors({ categoryName: 'Category name already exists.' })
+// displayFRACategoryCreatedFail
+setGlobalError('Failed to create category. Please try again.')
+
+[frontend/src/pages/CreateAccountPage.jsx]
+// displayInvalidInput
+setErrors(errs)
+// displayUserAccountCreatedSuccess
+navigate('/dashboard')
+// displayUserAccountCreatedFail
+setGlobalError('Failed to create account. Username or email may already be taken.')
+
+[frontend/src/pages/CreateUserProfilePage.jsx]
+// displayDuplicateProfile
+setErrors({ profileName: 'A profile with this name already exists.' })
+// displayUserProfileCreatedSuccess
+navigate('/user-profile-management')
+// displayUserProfileCreatedFail
+setGlobalError('Failed to create profile. Please try again.')
+
+[frontend/src/pages/EditFRAPage.jsx]
+// displaySuspendSuccess
+navigate('/fra-management')
+// displaySuspendFail
+setGlobalError('Failed to suspend FRA. Please try again.')
+// displayUpdateSuccess
+navigate('/fra-management')
+// displayInputErrorMessage
+setGlobalError('Failed to update FRA. Please check your inputs.')
+
+[frontend/src/pages/EditFRACategoryPage.jsx]
+// displaySuspendSuccess
+navigate('/fra-category-management')
+// displaySuspendFail
+setGlobalError('Failed to suspend category. Please try again.')
+// displayUpdateSuccess
+navigate('/fra-category-management')
+// displayInputErrorMessage
+setGlobalError('Failed to update category. Please check your inputs.')
+
+[frontend/src/pages/EditUserProfilePage.jsx]
+// displayUpdateSuccess
+navigate('/user-profile-management')
+// displaySuspendSuccess
+navigate('/user-profile-management')
+// displayInputErrorMessage
+setGlobalError('Failed to update profile. Please check your inputs.')
+// displaySuspendFail
+setGlobalError('Failed to update profile. Please check your inputs.')
+
+[frontend/src/pages/DashboardPage.jsx]
+// displayUserNotFound
+<p className="text-gray-400 text-sm font-medium">Sorry ,search no found!</p>
+// displayUserFound(result_list)
+<UserCard key={user.userID} user={user} onClick={setSelectedUser} />
+
+[frontend/src/pages/FRAManagementPage.jsx]
+// displayFRANotFound
+<p className="text-gray-400 text-sm font-medium">No FRA activities found.</p>
+// displayFRAFound(result_list)
+<FRACard key={fra.fraID} fra={fra} onClick={() => setSelectedFRA(fra)} />
+
+[frontend/src/pages/FRACategoryManagementPage.jsx]
+// displayCategoryNotFound
+<p className="text-gray-400 text-sm font-medium">No categories found.</p>
+// displayCategoryFound(result_list)
+<CategoryCard key={category.categoryID} category={category} onClick={() => setSelectedCategory(category)} />
+
+[frontend/src/pages/UserProfileManagementPage.jsx]
+// displayProfileNotFound
+<p className="text-gray-400 text-sm font-medium">No profiles found.</p>
+// displayProfileFound(result_list)
+<ProfileCard key={profile.profileID} profile={profile} onClick={() => setSelectedProfile(profile)} />
+
+[frontend/src/pages/LoginPage.jsx]
+// displayLoginFail
+setError('Invalid username or password. Please try again.')
+// displayUserAdminDashboard
+navigate('/dashboard')
+// displayPlatformManagementDashboard
+navigate('/fra-management')
+
+[frontend/src/components/AccountDetailsModal.jsx]
+// displayAccountDetails
+<DetailRow label="Email" value={user.email} />
+// displayUserAdminDashboard
+navigate(`/user-profile/${user.userID}`)
+
+[frontend/src/components/SuspendConfirmModal.jsx]
+// displayConfirmationMessage
+<p className="text-gray-600 text-sm mb-7">{message}</p>
+// displaySuspendSuccess
+{loading ? 'Saving...' : 'Confirm'}
+// displaySuspendFail
+className="px-5 py-2 rounded-lg bg-deletered text-white text-sm font-semibold hover:bg-red-700 transition-colors disabled:opacity-50"

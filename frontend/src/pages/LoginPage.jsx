@@ -29,6 +29,9 @@ export default function LoginPage() {
       const profileName = user?.user_profile?.profileName
       if (profileName === 'Platform Management') {
         // displayPlatformManagementDashboard
+        navigate('/fra-category-management')
+      } else if (profileName === 'Fund Raiser') {
+        // displayFundRaiserDashboard
         navigate('/fra-management')
       } else {
         // displayUserAdminDashboard (and safe fallback for all other roles)

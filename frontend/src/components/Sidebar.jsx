@@ -76,7 +76,7 @@ export default function Sidebar() {
           </>
         )}
 
-        {profileName === 'Platform Management' && (
+        {profileName === 'Fund Raiser' && (
           <>
             <button
               onClick={() => navigate('/fra-management')}
@@ -87,8 +87,13 @@ export default function Sidebar() {
               }`}
             >
               <MegaphoneIcon />
-              FRA Activity
+              FRA
             </button>
+          </>
+        )}
+
+        {profileName === 'Platform Management' && (
+          <>
             <button
               onClick={() => navigate('/fra-category-management')}
               className={`flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium text-sm text-left transition-colors ${
