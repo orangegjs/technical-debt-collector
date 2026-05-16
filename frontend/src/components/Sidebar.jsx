@@ -76,7 +76,7 @@ export default function Sidebar() {
           </>
         )}
 
-        {(profileName === 'Platform Management' || profileName === 'Fund Raiser') && (
+        {profileName === 'Fund Raiser' && (
           <>
             <button
               onClick={() => navigate('/fra-management')}
@@ -87,7 +87,7 @@ export default function Sidebar() {
               }`}
             >
               <MegaphoneIcon />
-              FRA Activity
+              FRA
             </button>
           </>
         )}
