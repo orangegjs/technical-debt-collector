@@ -126,6 +126,9 @@ function FRACard({ fra, onClick }) {
   )
 }
 
+// BCE Boundary: :RetrieveFRAPage
+// US#27: displayFRA(FRA activity) — surfaces fraViewCount
+// US#28: displayFRA(FRA activity) — surfaces fraShortlistCount
 function FRADetailModal({ fra, onClose, onUpdate }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
@@ -153,6 +156,8 @@ function FRADetailModal({ fra, onClose, onUpdate }) {
               <DetailRow label="Category" value={fra.fra_category?.categoryName || '-'} />
               <DetailRow label="Owner" value={fra.fra_owner?.username || '-'} />
               <DetailRow label="Description" value={fra.fraDescription || <span className="text-gray-400 italic">No description</span>} />
+              <DetailRow label="Number of Views" value={fra.fraViewCount ?? 0} />
+              <DetailRow label="Number of Shortlisted" value={fra.fraShortlistCount ?? 0} />
             </tbody>
           </table>
         </div>

@@ -99,6 +99,17 @@ export default function Sidebar() {
               <MegaphoneIcon />
               FRA
             </button>
+            <button
+              onClick={() => navigate('/completed-fra-history')}
+              className={`flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium text-sm text-left transition-colors ${
+                location.pathname.startsWith('/completed-fra-history')
+                  ? 'bg-blue-50 text-primary'
+                  : 'text-gray-500 hover:bg-gray-50'
+              }`}
+            >
+              <ReceiptIcon />
+              Completed FRA History
+            </button>
           </>
         )}
 
@@ -152,6 +163,17 @@ export default function Sidebar() {
             >
               <FolderIcon />
               FRA Category
+            </button>
+            <button
+              onClick={() => navigate('/generate-report')}
+              className={`flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium text-sm text-left transition-colors ${
+                location.pathname.startsWith('/generate-report')
+                  ? 'bg-blue-50 text-primary'
+                  : 'text-gray-500 hover:bg-gray-50'
+              }`}
+            >
+              <ReceiptIcon />
+              Generate Report
             </button>
           </>
         )}

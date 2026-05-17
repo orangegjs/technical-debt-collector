@@ -53,3 +53,12 @@ class Donation(Base):
     @staticmethod
     def retrieveDonation(db: Session, donationID: int) -> "Donation | None":
         return db.query(Donation).filter(Donation.donationID == donationID).first()
+
+    @staticmethod
+    def getTotalDonation(db: Session, startDate: date, endDate: date) -> int:
+        """US#38/39/40: Count completed donations within the date period."""
+        return db.query(Donation).filter(
+            Donation.donationDate >= startDate,
+            Donation.donationDate <= endDate,
+            Donation.donationStatus == "Completed",
+        ).count()

@@ -138,3 +138,52 @@ class FRAActivity(Base):
             except Exception:
                 db.rollback()  # non-fatal — view counter failure must not block the read
         return fra
+
+    def searchHistory(
+        self,
+        db: Session,
+        ownerID: int,
+        keyword: str = "",
+        serviceType: "str | None" = None,
+        startDate: "date | None" = None,
+        endDate: "date | None" = None,
+    ) -> list:
+        """US#29: Fund Raiser searches completed FRAs they own, filtered by keyword,
+        serviceType (categoryName), and date range (fraEndDate)."""
+        from entities.fra_category import FRACategory
+        from sqlalchemy import String as SAString
+
+        query = (
+            db.query(FRAActivity)
+            .join(FRACategory, FRAActivity.fraCategoryID == FRACategory.categoryID)
+            .filter(FRAActivity.fraOwnerID == ownerID)
+            .filter(FRAActivity.fraStatus == "Completed")
+        )
+        if keyword:
+            query = query.filter(
+                FRAActivity.fraName.ilike(f"%{keyword}%")
+                | FRAActivity.fraID.cast(SAString).ilike(f"%{keyword}%")
+            )
+        if serviceType:
+            query = query.filter(FRACategory.categoryName == serviceType)
+        if startDate:
+            query = query.filter(FRAActivity.fraEndDate >= startDate)
+        if endDate:
+            query = query.filter(FRAActivity.fraEndDate <= endDate)
+        return query.order_by(FRAActivity.fraEndDate.desc()).all()
+
+    @staticmethod
+    def retrieveCompletedFRA(db: Session, fraID: int) -> "FRAActivity | None":
+        """US#30: Retrieve a single completed FRA by ID. No view count side-effect."""
+        return db.query(FRAActivity).filter(
+            FRAActivity.fraID == fraID,
+            FRAActivity.fraStatus == "Completed",
+        ).first()
+
+    @staticmethod
+    def getTotalFRA(db: Session, startDate: date, endDate: date) -> int:
+        """US#38/39/40: Count FRAs with fraStartDate within the date period."""
+        return db.query(FRAActivity).filter(
+            FRAActivity.fraStartDate >= startDate,
+            FRAActivity.fraStartDate <= endDate,
+        ).count()

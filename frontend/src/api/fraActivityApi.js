@@ -58,3 +58,17 @@ export async function searchAvailableFRA(userID, keyword) {
 export async function retrieveAvailableFRA(fraID) {
   return request('GET', `/api/fras/available/${fraID}`)
 }
+
+// → SearchCompletedFRAController.searchHistory()
+export async function searchCompletedFRA(ownerID, keyword, serviceType, startDate, endDate) {
+  const params = new URLSearchParams({ ownerID: String(ownerID), q: keyword || '' })
+  if (serviceType) params.append('serviceType', serviceType)
+  if (startDate)   params.append('startDate', startDate)
+  if (endDate)     params.append('endDate', endDate)
+  return request('GET', `/api/fras/history/search?${params.toString()}`)
+}
+
+// → RetrieveCompletedFRAController.retrieveCompletedFRA()
+export async function retrieveCompletedFRA(fraID) {
+  return request('GET', `/api/fras/history/${fraID}`)
+}

@@ -1,7 +1,7 @@
 from datetime import date
 from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field, model_validator
 from sqlalchemy.orm import Session
 
@@ -12,6 +12,8 @@ from controls.suspend_fra_activity_controller import SuspendFRAActivityControlle
 from controls.update_fra_activity_controller import UpdateFRAActivityController
 from controls.search_available_fra_controller import SearchAvailableFRAController
 from controls.retrieve_available_fra_controller import RetrieveAvailableFRAController
+from controls.search_completed_fra_controller import SearchCompletedFRAController
+from controls.retrieve_completed_fra_controller import RetrieveCompletedFRAController
 from database import get_db
 from entities.fra_activity import FRAActivity
 from entities.fra_category import FRACategory
@@ -163,6 +165,33 @@ def get_available_fra(fra_id: int, db: Session = Depends(get_db)):
     fra = ctrl.retrieveAvailableFRA(db, fra_id)
     if not fra:
         raise HTTPException(status_code=404, detail="FRA not found or not available")
+    return FRAActivityResponse.model_validate(fra)
+
+
+# BCE Boundary: :SearchCompletedFRAPage
+# US#29: displayFRA(List<FRA>), displayFRANotFound()
+@router.get("/fras/history/search", response_model=list[FRAActivityResponse])
+def search_completed_fras(
+    ownerID: int,
+    q: str = "",
+    serviceType: Optional[str] = None,
+    startDate: Optional[date] = Query(None),
+    endDate: Optional[date] = Query(None),
+    db: Session = Depends(get_db),
+):
+    ctrl = SearchCompletedFRAController()
+    results = ctrl.searchHistory(db, ownerID, q, serviceType, startDate, endDate)
+    return [FRAActivityResponse.model_validate(r) for r in results]
+
+
+# BCE Boundary: :RetrieveCompletedFRAPage
+# US#30: displayFRA(FRA activity)
+@router.get("/fras/history/{fra_id}", response_model=FRAActivityResponse)
+def get_completed_fra(fra_id: int, db: Session = Depends(get_db)):
+    ctrl = RetrieveCompletedFRAController()
+    fra = ctrl.retrieveCompletedFRA(db, fra_id)
+    if not fra:
+        raise HTTPException(status_code=404, detail="Completed FRA not found")
     return FRAActivityResponse.model_validate(fra)
 
 

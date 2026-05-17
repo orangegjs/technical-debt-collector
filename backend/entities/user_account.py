@@ -1,4 +1,5 @@
 import bcrypt
+from datetime import date
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import Session, relationship
 from database import Base
@@ -101,3 +102,8 @@ class UserAccount(Base):
     @staticmethod
     def retrieveUserAccount(db: Session, userID: int) -> "UserAccount | None":
         return db.query(UserAccount).filter(UserAccount.userID == userID).first()
+
+    @staticmethod
+    def getTotalAccount(db: Session, startDate: date, endDate: date) -> int:
+        """US#38/39/40: Return total registered users in the system."""
+        return db.query(UserAccount).count()

@@ -17,6 +17,8 @@ import EditFRAPage from './pages/EditFRAPage'
 import SearchAvailableFRAPage from './pages/SearchAvailableFRAPage'
 import SearchFavouritePage    from './pages/SearchFavouritePage'
 import SearchDonationPage     from './pages/SearchDonationPage'
+import SearchCompletedFRAPage from './pages/SearchCompletedFRAPage'
+import GenerateReportPage     from './pages/GenerateReportPage'
 
 export const AuthContext = createContext(null)
 
@@ -174,6 +176,22 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <SearchDonationPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/completed-fra-history"
+            element={
+              <ProtectedRoute>
+                <SearchCompletedFRAPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/generate-report"
+            element={
+              <ProtectedRoute>
+                <GenerateReportPage />
               </ProtectedRoute>
             }
           />
