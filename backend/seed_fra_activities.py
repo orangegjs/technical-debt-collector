@@ -20,6 +20,9 @@ from database import SessionLocal
 from entities.fra_activity import FRAActivity
 from entities.fra_category import FRACategory
 from entities.user_account import UserAccount
+import entities.user_profile  # noqa: F401 — registers UserProfile mapper
+import entities.favourite    # noqa: F401 — registers Favourite mapper
+import entities.donation      # noqa: F401 — registers Donation mapper
 
 CAMPAIGN_NAMES = [
     "Clean Water for All", "Books for Bright Minds", "Feed the Hungry",
