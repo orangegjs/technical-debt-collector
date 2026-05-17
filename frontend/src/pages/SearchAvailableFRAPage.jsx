@@ -111,9 +111,6 @@ function FRACard({ fra, onClick }) {
         Goal: ${Number(fra.fraGoalAmount || 0).toLocaleString()}
       </p>
       {truncated && <p className="text-xs text-gray-400">{truncated}</p>}
-      <p className="text-xs text-gray-400 mt-1">
-        {fra.fraViewCount ?? 0} views · {fra.fraShortlistCount ?? 0} saves
-      </p>
     </button>
   )
 }
@@ -178,8 +175,6 @@ function FRADetailModal({ fra, userID, onClose, onSaved }) {
             <DetailRow label="Status"       value={fra.fraStatus} />
             <DetailRow label="Category"     value={fra.fra_category?.categoryName || '-'} />
             <DetailRow label="Description"  value={fra.fraDescription || <span className="text-gray-400 italic">No description</span>} />
-            <DetailRow label="Views"        value={fra.fraViewCount ?? 0} />
-            <DetailRow label="Saves"        value={fra.fraShortlistCount ?? 0} />
           </tbody>
         </table>
 
