@@ -139,9 +139,9 @@ def list_fras(db: Session = Depends(get_db)):
 # BCE Boundary: :SearchFRAPage
 # Methods: displayFRAFound(result_list), displayFRANotFound()
 @router.get("/fras/search", response_model=list[FRAActivityResponse])
-def search_fras(q: str = "", db: Session = Depends(get_db)):
+def search_fras(q: str = "", ownerID: Optional[int] = None, db: Session = Depends(get_db)):
     ctrl = SearchFRAActivityController()
-    results = ctrl.searchFRA(db, q)
+    results = ctrl.searchFRA(db, q, ownerID)
     return [FRAActivityResponse.model_validate(r) for r in results]
 
 

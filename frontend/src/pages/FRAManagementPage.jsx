@@ -3,12 +3,14 @@
 
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../App'
 import Sidebar from '../components/Sidebar'
 import SearchBar from '../components/SearchBar'
 import { searchFRA } from '../api/fraActivityApi'
 
 export default function FRAManagementPage() {
   const navigate = useNavigate()
+  const { user } = useAuth()
   const [fraList, setFraList] = useState([])
   const [loading, setLoading] = useState(false)
   const [noResults, setNoResults] = useState(false)
@@ -21,7 +23,7 @@ export default function FRAManagementPage() {
   async function loadAll() {
     setLoading(true)
     try {
-      const results = await searchFRA('')
+      const results = await searchFRA('', user.userID)
       setFraList(results)
       setNoResults(results.length === 0)
     } catch {
@@ -35,7 +37,7 @@ export default function FRAManagementPage() {
   async function handleSearch(keyword) {
     setLoading(true)
     try {
-      const results = await searchFRA(keyword)
+      const results = await searchFRA(keyword, user.userID)
       setFraList(results)
       setNoResults(results.length === 0)
     } catch {

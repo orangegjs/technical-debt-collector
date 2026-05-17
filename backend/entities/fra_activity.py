@@ -102,13 +102,18 @@ class FRAActivity(Base):
             db.rollback()
             return False
 
-    def searchFRA(self, db: Session, keyword: str) -> list:
+    def searchFRA(self, db: Session, keyword: str, ownerID: "int | None" = None) -> list:
         from sqlalchemy import String as SAString
 
-        return db.query(FRAActivity).filter(
-            FRAActivity.fraName.ilike(f"%{keyword}%")
-            | FRAActivity.fraID.cast(SAString).ilike(f"%{keyword}%")
-        ).all()
+        query = db.query(FRAActivity)
+        if ownerID is not None:
+            query = query.filter(FRAActivity.fraOwnerID == ownerID)
+        if keyword:
+            query = query.filter(
+                FRAActivity.fraName.ilike(f"%{keyword}%")
+                | FRAActivity.fraID.cast(SAString).ilike(f"%{keyword}%")
+            )
+        return query.all()
 
     def searchAvailableFRA(self, db: Session, userID: int, keyword: str) -> list:
         from sqlalchemy import String as SAString

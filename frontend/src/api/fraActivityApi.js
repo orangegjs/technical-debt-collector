@@ -31,8 +31,10 @@ export async function retrieveFRA(fraID) {
 }
 
 // -> SearchFRAActivityController.searchFRA()
-export async function searchFRA(keyword) {
-  return request('GET', `/api/fras/search?q=${encodeURIComponent(keyword)}`)
+export async function searchFRA(keyword, ownerID = null) {
+  const q = encodeURIComponent(keyword || '')
+  const owner = ownerID != null ? `&ownerID=${ownerID}` : ''
+  return request('GET', `/api/fras/search?q=${q}${owner}`)
 }
 
 // -> UpdateFRAActivityController.updateFRA()
