@@ -10,6 +10,7 @@ export default function Sidebar() {
   const { user, logout } = useAuth()
 
   const profileName = user?.user_profile?.profileName
+  const displayRole = user?.user_profile?.profileName || user?.role || ''
 
   async function handleLogout() {
     try {
@@ -53,6 +54,9 @@ export default function Sidebar() {
     <aside className="w-[220px] h-screen sticky top-0 bg-white flex flex-col shadow-sm shrink-0 overflow-y-auto">
       <div className="p-5 border-b border-gray-100">
         <Logo size="sm" />
+        {displayRole && (
+          <p className="mt-2 text-xs font-medium text-gray-400 truncate">{displayRole}</p>
+        )}
       </div>
       <nav className="flex flex-col gap-1 p-3 mt-2">
         {profileName === 'User Admin' && (
