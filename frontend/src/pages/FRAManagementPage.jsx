@@ -119,6 +119,9 @@ function FRACard({ fra, onClick }) {
         Goal: ${Number(fra.fraGoalAmount || 0).toLocaleString()} | Status: {fra.fraStatus}
       </p>
       {truncated && <p className="text-xs text-gray-500">{truncated}</p>}
+      <p className="text-xs text-gray-400 mt-1">
+        {fra.fraViewCount ?? 0} views · {fra.fraShortlistCount ?? 0} saves
+      </p>
     </button>
   )
 }
