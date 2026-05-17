@@ -43,6 +43,12 @@ export default function Sidebar() {
     '/edit-fra',
   ].some((p) => location.pathname.startsWith(p))
 
+  const isDonee = [
+    '/available-fras',
+    '/favourites',
+    '/donation-history',
+  ].some((p) => location.pathname.startsWith(p))
+
   return (
     <aside className="w-[220px] h-screen sticky top-0 bg-white flex flex-col shadow-sm shrink-0 overflow-y-auto">
       <div className="p-5 border-b border-gray-100">
@@ -88,6 +94,44 @@ export default function Sidebar() {
             >
               <MegaphoneIcon />
               FRA
+            </button>
+          </>
+        )}
+
+        {profileName === 'Donee' && (
+          <>
+            <button
+              onClick={() => navigate('/available-fras')}
+              className={`flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium text-sm text-left transition-colors ${
+                location.pathname.startsWith('/available-fras')
+                  ? 'bg-blue-50 text-primary'
+                  : 'text-gray-500 hover:bg-gray-50'
+              }`}
+            >
+              <SearchIcon />
+              Browse FRAs
+            </button>
+            <button
+              onClick={() => navigate('/favourites')}
+              className={`flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium text-sm text-left transition-colors ${
+                location.pathname.startsWith('/favourites')
+                  ? 'bg-blue-50 text-primary'
+                  : 'text-gray-500 hover:bg-gray-50'
+              }`}
+            >
+              <HeartIcon />
+              My Favourites
+            </button>
+            <button
+              onClick={() => navigate('/donation-history')}
+              className={`flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium text-sm text-left transition-colors ${
+                location.pathname.startsWith('/donation-history')
+                  ? 'bg-blue-50 text-primary'
+                  : 'text-gray-500 hover:bg-gray-50'
+              }`}
+            >
+              <ReceiptIcon />
+              Donation History
             </button>
           </>
         )}
@@ -148,6 +192,35 @@ function MegaphoneIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M3 11v2a1 1 0 0 0 1 1h2l3 6h2l-1-6h4l5 3V7l-5 3H4a1 1 0 0 0-1 1z" />
+    </svg>
+  )
+}
+
+function SearchIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+      <circle cx="11" cy="11" r="8" />
+      <line x1="21" y1="21" x2="16.65" y2="16.65" />
+    </svg>
+  )
+}
+
+function HeartIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+    </svg>
+  )
+}
+
+function ReceiptIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+      <polyline points="14 2 14 8 20 8" />
+      <line x1="16" y1="13" x2="8" y2="13" />
+      <line x1="16" y1="17" x2="8" y2="17" />
+      <polyline points="10 9 9 9 8 9" />
     </svg>
   )
 }

@@ -7,18 +7,22 @@ from database import Base
 class FRAActivity(Base):
     __tablename__ = "fra_activity"
 
-    fraID = Column(Integer, primary_key=True, autoincrement=True)
-    fraName = Column(String, unique=True, nullable=False)
-    fraDescription = Column(String, nullable=True)
-    fraGoalAmount = Column(Float, nullable=False)
-    fraStartDate = Column(Date, nullable=False)
-    fraEndDate = Column(Date, nullable=False)
-    fraStatus = Column(String, default="Active")
-    fraCategoryID = Column(Integer, ForeignKey("fra_category.categoryID"), nullable=False)
-    fraOwnerID = Column(Integer, ForeignKey("user_account.userID"), nullable=False)
+    fraID             = Column(Integer, primary_key=True, autoincrement=True)
+    fraName           = Column(String, unique=True, nullable=False)
+    fraDescription    = Column(String, nullable=True)
+    fraGoalAmount     = Column(Float, nullable=False)
+    fraStartDate      = Column(Date, nullable=False)
+    fraEndDate        = Column(Date, nullable=False)
+    fraStatus         = Column(String, default="Active")
+    fraViewCount      = Column(Integer, default=0)
+    fraShortlistCount = Column(Integer, default=0)
+    fraCategoryID     = Column(Integer, ForeignKey("fra_category.categoryID"), nullable=False)
+    fraOwnerID        = Column(Integer, ForeignKey("user_account.userID"), nullable=False)
 
-    fra_category = relationship("FRACategory", back_populates="fra_activities")
-    fra_owner = relationship("UserAccount", back_populates="fra_activities")
+    fra_category   = relationship("FRACategory", back_populates="fra_activities")
+    fra_owner      = relationship("UserAccount",  back_populates="fra_activities")
+    favourites     = relationship("Favourite",    back_populates="fra")
+    donations      = relationship("Donation",     back_populates="fra")
 
     def createFRA(
         self,
@@ -105,3 +109,27 @@ class FRAActivity(Base):
             FRAActivity.fraName.ilike(f"%{keyword}%")
             | FRAActivity.fraID.cast(SAString).ilike(f"%{keyword}%")
         ).all()
+
+    def searchAvailableFRA(self, db: Session, userID: int, keyword: str) -> list:
+        from sqlalchemy import String as SAString
+
+        query = db.query(FRAActivity).filter(FRAActivity.fraStatus == "Active")
+        if keyword:
+            query = query.filter(
+                FRAActivity.fraName.ilike(f"%{keyword}%")
+                | FRAActivity.fraID.cast(SAString).ilike(f"%{keyword}%")
+            )
+        return query.order_by(FRAActivity.fraStartDate.desc()).all()
+
+    def retrieveAvailableFRA(self, db: Session, fraID: int) -> "FRAActivity | None":
+        fra = db.query(FRAActivity).filter(
+            FRAActivity.fraID == fraID,
+            FRAActivity.fraStatus == "Active",
+        ).first()
+        if fra:
+            try:
+                fra.fraViewCount = (fra.fraViewCount or 0) + 1
+                db.commit()
+            except Exception:
+                db.rollback()  # non-fatal — view counter failure must not block the read
+        return fra

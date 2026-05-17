@@ -33,8 +33,11 @@ export default function LoginPage() {
       } else if (profileName === 'Fund Raiser') {
         // displayFundRaiserDashboard
         navigate('/fra-management')
+      } else if (profileName === 'Donee') {
+        // displayDoneeDashboard
+        navigate('/available-fras')
       } else {
-        // displayUserAdminDashboard (and safe fallback for all other roles)
+        // displayUserAdminDashboard
         navigate('/dashboard')
       }
     } catch (err) {

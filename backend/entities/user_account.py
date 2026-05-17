@@ -15,8 +15,10 @@ class UserAccount(Base):
     profile_id          = Column(Integer, ForeignKey("user_profile.profileID"), nullable=True)
     profile_picture_url = Column(String, nullable=True)
 
-    user_profile = relationship("UserProfile", back_populates="user_accounts")
-    fra_activities = relationship("FRAActivity", back_populates="fra_owner")
+    user_profile   = relationship("UserProfile",  back_populates="user_accounts")
+    fra_activities = relationship("FRAActivity",  back_populates="fra_owner")
+    favourites     = relationship("Favourite",    back_populates="donee")
+    donations      = relationship("Donation",     back_populates="donee")
 
     # Backward-compat alias so LoginController (untouched) can access user.password_hash
     @property

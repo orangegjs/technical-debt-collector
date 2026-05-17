@@ -14,6 +14,9 @@ import EditFRACategoryPage from './pages/EditFRACategoryPage'
 import FRAManagementPage from './pages/FRAManagementPage'
 import CreateFRAPage from './pages/CreateFRAPage'
 import EditFRAPage from './pages/EditFRAPage'
+import SearchAvailableFRAPage from './pages/SearchAvailableFRAPage'
+import SearchFavouritePage    from './pages/SearchFavouritePage'
+import SearchDonationPage     from './pages/SearchDonationPage'
 
 export const AuthContext = createContext(null)
 
@@ -147,6 +150,30 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <EditFRAPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/available-fras"
+            element={
+              <ProtectedRoute>
+                <SearchAvailableFRAPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/favourites"
+            element={
+              <ProtectedRoute>
+                <SearchFavouritePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/donation-history"
+            element={
+              <ProtectedRoute>
+                <SearchDonationPage />
               </ProtectedRoute>
             }
           />

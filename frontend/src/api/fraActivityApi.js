@@ -44,3 +44,15 @@ export async function updateFRA(fraID, data) {
 export async function suspendFRA(fraID) {
   return request('PUT', `/api/fras/${fraID}/suspend`)
 }
+
+// → SearchAvailableFRAController.searchAvailableFRA()
+export async function searchAvailableFRA(userID, keyword) {
+  const q = encodeURIComponent(keyword || '')
+  return request('GET', `/api/fras/available/search?userID=${userID}&q=${q}`)
+}
+
+// → RetrieveAvailableFRAController.retrieveAvailableFRA()
+// Side-effect: increments fraViewCount server-side.
+export async function retrieveAvailableFRA(fraID) {
+  return request('GET', `/api/fras/available/${fraID}`)
+}

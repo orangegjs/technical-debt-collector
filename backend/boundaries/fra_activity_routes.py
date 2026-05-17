@@ -10,6 +10,8 @@ from controls.retrieve_fra_activity_controller import RetrieveFRAActivityControl
 from controls.search_fra_activity_controller import SearchFRAActivityController
 from controls.suspend_fra_activity_controller import SuspendFRAActivityController
 from controls.update_fra_activity_controller import UpdateFRAActivityController
+from controls.search_available_fra_controller import SearchAvailableFRAController
+from controls.retrieve_available_fra_controller import RetrieveAvailableFRAController
 from database import get_db
 from entities.fra_activity import FRAActivity
 from entities.fra_category import FRACategory
@@ -80,6 +82,8 @@ class FRAActivityResponse(BaseModel):
     fraStartDate: date
     fraEndDate: date
     fraStatus: str
+    fraViewCount: int = 0
+    fraShortlistCount: int = 0
     fraCategoryID: int
     fraOwnerID: int
     fra_category: Optional[NestedCategory] = None
@@ -139,6 +143,27 @@ def search_fras(q: str = "", db: Session = Depends(get_db)):
     ctrl = SearchFRAActivityController()
     results = ctrl.searchFRA(db, q)
     return [FRAActivityResponse.model_validate(r) for r in results]
+
+
+# BCE Boundary: :SearchAvailableFRAPage
+# Methods: displayFRA(result_list), displayFRANotFound()
+@router.get("/fras/available/search", response_model=list[FRAActivityResponse])
+def search_available_fras(userID: int, q: str = "", db: Session = Depends(get_db)):
+    ctrl = SearchAvailableFRAController()
+    results = ctrl.searchAvailableFRA(db, userID, q)
+    return [FRAActivityResponse.model_validate(r) for r in results]
+
+
+# BCE Boundary: :RetrieveAvailableFRAPage
+# Methods: displayFRA(FRA activity)
+# Side-effect: increments fraViewCount on the FRA (handled in entity).
+@router.get("/fras/available/{fra_id}", response_model=FRAActivityResponse)
+def get_available_fra(fra_id: int, db: Session = Depends(get_db)):
+    ctrl = RetrieveAvailableFRAController()
+    fra = ctrl.retrieveAvailableFRA(db, fra_id)
+    if not fra:
+        raise HTTPException(status_code=404, detail="FRA not found or not available")
+    return FRAActivityResponse.model_validate(fra)
 
 
 # BCE Boundary: :RetrieveFRAPage
