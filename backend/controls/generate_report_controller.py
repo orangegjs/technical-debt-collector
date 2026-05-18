@@ -15,21 +15,18 @@ class GenerateReportController:
         db: Session,
         reportType: str,
         startDate: "date | None" = None,
-        endDate: "date | None" = None,
     ) -> Report:
-        today = date.today()
-        if startDate is None or endDate is None:
-            if reportType == "daily":
-                startDate = today
-                endDate = today
-            elif reportType == "weekly":
-                startDate = today - timedelta(days=6)
-                endDate = today
-            elif reportType == "monthly":
-                startDate = today - timedelta(days=29)
-                endDate = today
-            else:
-                raise ValueError(f"Invalid reportType: {reportType}")
+        if startDate is None:
+            startDate = date.today()
+
+        if reportType == "daily":
+            endDate = startDate
+        elif reportType == "weekly":
+            endDate = startDate + timedelta(days=6)
+        elif reportType == "monthly":
+            endDate = startDate + timedelta(days=29)
+        else:
+            raise ValueError(f"Invalid reportType: {reportType}")
 
         totalFRA      = FRAActivity.getTotalFRA(db, startDate, endDate)
         totalDonation = Donation.getTotalDonation(db, startDate, endDate)

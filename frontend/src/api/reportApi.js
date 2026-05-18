@@ -13,10 +13,9 @@ async function request(method, path, body) {
 
 // → GenerateReportController.generateReport()
 // reportType must be "daily" | "weekly" | "monthly"
-// startDate/endDate optional — if omitted, controller derives them from reportType
-export async function generateReport(reportType, startDate, endDate) {
+// startDate optional — if omitted, controller defaults to today; endDate is always derived server-side
+export async function generateReport(reportType, startDate) {
   const params = new URLSearchParams({ reportType })
   if (startDate) params.append('startDate', startDate)
-  if (endDate)   params.append('endDate', endDate)
   return request('POST', `/api/reports/generate?${params.toString()}`)
 }

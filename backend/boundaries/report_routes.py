@@ -30,16 +30,13 @@ class ReportResponse(BaseModel):
 def generate_report(
     reportType: str,
     startDate: Optional[date] = Query(None),
-    endDate: Optional[date] = Query(None),
     db: Session = Depends(get_db),
 ):
     if reportType not in ("daily", "weekly", "monthly"):
         raise HTTPException(status_code=400, detail="reportType must be daily, weekly, or monthly")
-    if reportType == "daily" and startDate is not None and endDate is not None and startDate != endDate:
-        raise HTTPException(status_code=400, detail="Daily report: start date and end date must be the same")
     ctrl = GenerateReportController()
     try:
-        report = ctrl.generateReport(db, reportType, startDate, endDate)
+        report = ctrl.generateReport(db, reportType, startDate)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     return ReportResponse.model_validate(report)
