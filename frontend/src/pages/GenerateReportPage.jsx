@@ -9,16 +9,60 @@ import { generateReport } from '../api/reportApi'
 
 export default function GenerateReportPage() {
   const [reportType, setReportType] = useState('daily')
+  const [startDate, setStartDate] = useState('')
+  const [endDate, setEndDate] = useState('')
   const [report, setReport] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
+  function handleReportTypeChange(e) {
+    const type = e.target.value
+    setReportType(type)
+    setReport(null)
+    setError('')
+    // reset dates when switching type
+    setStartDate('')
+    setEndDate('')
+  }
+
+  function handleStartDateChange(e) {
+    const val = e.target.value
+    setStartDate(val)
+    setError('')
+    // for daily, end date is always locked to start date
+    if (reportType === 'daily') {
+      setEndDate(val)
+    }
+  }
+
+  function handleEndDateChange(e) {
+    setEndDate(e.target.value)
+    setError('')
+  }
+
+  function validate() {
+    if (!startDate || !endDate) {
+      setError('Please select both start date and end date.')
+      return false
+    }
+    if (new Date(endDate) < new Date(startDate)) {
+      setError('End date cannot be before start date.')
+      return false
+    }
+    if (reportType === 'daily' && startDate !== endDate) {
+      setError('Daily report: start date and end date must be the same.')
+      return false
+    }
+    return true
+  }
+
   async function handleGenerate() {
+    if (!validate()) return
     setLoading(true)
     setError('')
     setReport(null)
     try {
-      const result = await generateReport(reportType)
+      const result = await generateReport(reportType, startDate, endDate)
       setReport(result)
     } catch (e) {
       setError(e.detail || 'Failed to generate report.')
@@ -27,17 +71,20 @@ export default function GenerateReportPage() {
     }
   }
 
+  const isDaily = reportType === 'daily'
+
   return (
     <div className="flex min-h-screen bg-lightbg">
       <Sidebar />
       <main className="flex-1 p-8 flex flex-col gap-5">
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex flex-col gap-4 max-w-2xl">
           <h2 className="text-lg font-bold text-gray-900">Generate Report</h2>
+
           <div className="flex flex-col gap-1">
             <label className="text-xs font-medium text-gray-500">Report Type</label>
             <select
               value={reportType}
-              onChange={(e) => setReportType(e.target.value)}
+              onChange={handleReportTypeChange}
               className="border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-primary"
             >
               <option value="daily">Daily</option>
@@ -45,6 +92,37 @@ export default function GenerateReportPage() {
               <option value="monthly">Monthly</option>
             </select>
           </div>
+
+          <div className="flex gap-3 flex-wrap">
+            <div className="flex flex-col gap-1 flex-1 min-w-[140px]">
+              <label className="text-xs font-medium text-gray-500">Start Date</label>
+              <input
+                type="date"
+                value={startDate}
+                onChange={handleStartDateChange}
+                className="border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-primary"
+              />
+            </div>
+            <div className="flex flex-col gap-1 flex-1 min-w-[140px]">
+              <label className="text-xs font-medium text-gray-500">
+                End Date
+                {isDaily && <span className="ml-1 text-gray-400">(same as start for daily)</span>}
+              </label>
+              <input
+                type="date"
+                value={endDate}
+                onChange={handleEndDateChange}
+                disabled={isDaily}
+                min={startDate || undefined}
+                className={`border rounded-lg px-3 py-2 text-sm outline-none transition-colors ${
+                  isDaily
+                    ? 'border-gray-100 bg-gray-50 text-gray-400 cursor-not-allowed'
+                    : 'border-gray-200 focus:border-primary'
+                }`}
+              />
+            </div>
+          </div>
+
           <button
             onClick={handleGenerate}
             disabled={loading}
@@ -52,6 +130,7 @@ export default function GenerateReportPage() {
           >
             {loading ? 'Generating...' : 'Generate'}
           </button>
+
           {error && <p className="text-deletered text-sm">{error}</p>}
         </div>
 

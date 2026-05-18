@@ -35,6 +35,8 @@ def generate_report(
 ):
     if reportType not in ("daily", "weekly", "monthly"):
         raise HTTPException(status_code=400, detail="reportType must be daily, weekly, or monthly")
+    if reportType == "daily" and startDate is not None and endDate is not None and startDate != endDate:
+        raise HTTPException(status_code=400, detail="Daily report: start date and end date must be the same")
     ctrl = GenerateReportController()
     try:
         report = ctrl.generateReport(db, reportType, startDate, endDate)
