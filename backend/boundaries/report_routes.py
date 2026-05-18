@@ -34,6 +34,8 @@ def generate_report(
 ):
     if reportType not in ("daily", "weekly", "monthly"):
         raise HTTPException(status_code=400, detail="reportType must be daily, weekly, or monthly")
+    if startDate is not None and startDate > date.today():
+        raise HTTPException(status_code=400, detail="Start date cannot be in the future")
     ctrl = GenerateReportController()
     try:
         report = ctrl.generateReport(db, reportType, startDate)

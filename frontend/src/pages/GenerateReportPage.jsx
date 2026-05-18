@@ -25,6 +25,10 @@ export default function GenerateReportPage() {
       setError('Please select a start date.')
       return
     }
+    if (startDate > today) {
+      setError('Start date cannot be in the future.')
+      return
+    }
     setLoading(true)
     setError('')
     setReport(null)
@@ -37,6 +41,8 @@ export default function GenerateReportPage() {
       setLoading(false)
     }
   }
+
+  const today = new Date().toISOString().split('T')[0]
 
   const endDateHint = {
     daily:   'End date = start date',
@@ -70,6 +76,7 @@ export default function GenerateReportPage() {
               type="date"
               value={startDate}
               onChange={(e) => { setStartDate(e.target.value); setError('') }}
+              max={today}
               className="border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-primary"
             />
             <p className="text-xs text-gray-400">{endDateHint}</p>
