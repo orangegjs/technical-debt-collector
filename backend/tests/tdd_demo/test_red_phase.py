@@ -13,6 +13,12 @@ behaviour, so every test fails against the stubs.
 No database is needed — stubs accept plain arguments and return immediately.
 """
 
+import pytest
+
+# Every test in this file is intentionally expected to fail (TDD red phase).
+# xfail(strict=True): if a test unexpectedly passes, CI flags it as an error.
+pytestmark = pytest.mark.xfail(strict=True, reason="Red phase: stubs intentionally return wrong values")
+
 from tests.tdd_demo.stubs import (
     StubCreateUserProfileController,
     StubRetrieveUserProfileController,
